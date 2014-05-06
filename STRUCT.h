@@ -21,6 +21,8 @@
 
 #define VOTE_K 3
 
+using namespace std; 
+
 struct REC                      // 记录连接事件
 {
     int ID1;                    // 主动连接设备ID

@@ -48,9 +48,3 @@ int simulation_time_based()
     return 0; 
 }
 
-int main()
-{
-    data_input(); 
-    return 0;
-}
-

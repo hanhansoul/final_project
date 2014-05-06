@@ -115,9 +115,3 @@ int data_input()
     return 0;
 }
 
-int main()
-{
-    data_input(); 
-    return 0; 
-}
-
