@@ -1,0 +1,40 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+DEBUG	data_input.cpp	21;"	d	file:
+DEBUG	experiment_test.cpp	21;"	d	file:
+DEBUG	tmp/a.cpp	21;"	d	file:
+DEBUG	tmp/b.cpp	21;"	d	file:
+ID1	REC.h	/^    int ID1;                    \/\/ 主动连接设备ID$/;"	m	struct:REC	access:public
+ID2	REC.h	/^    int ID2;                    \/\/ 被连接设备ID$/;"	m	struct:REC	access:public
+INPUT_DATA_FILE	data_input.cpp	52;"	d	file:
+MAXN	data_input.cpp	54;"	d	file:
+NODE	REC.h	/^struct NODE$/;"	s
+NODE::state	REC.h	/^    int state;                  \/\/ 状态.表明该节点为支配节点或被支配节点.用概率表示?$/;"	m	struct:NODE	access:public
+Q_contact_rec_time_based	data_input.cpp	/^vector < REC > Q_contact_rec_time_based;        \/\/ 根据时间轴来记录连接$/;"	v
+REC	REC.h	/^struct REC                      \/\/ 记录连接事件$/;"	s
+REC::ID1	REC.h	/^    int ID1;                    \/\/ 主动连接设备ID$/;"	m	struct:REC	access:public
+REC::ID2	REC.h	/^    int ID2;                    \/\/ 被连接设备ID$/;"	m	struct:REC	access:public
+REC::end_time	REC.h	/^    int start_time, end_time;   \/\/ 连接开始和结束时间$/;"	m	struct:REC	access:public
+REC::interval	REC.h	/^    int interval;               \/\/ 连接时间间隔$/;"	m	struct:REC	access:public
+REC::num	REC.h	/^    int num;                    \/\/ 连接编号$/;"	m	struct:REC	access:public
+REC::start_time	REC.h	/^    int start_time, end_time;   \/\/ 连接开始和结束时间$/;"	m	struct:REC	access:public
+a	tmp/a.cpp	/^int a; $/;"	v
+data_input	data_input.cpp	/^int data_input()$/;"	f	signature:()
+data_input	experiment_test.cpp	/^int data_input(); $/;"	p	file:	signature:()
+end_time	REC.h	/^    int start_time, end_time;   \/\/ 连接开始和结束时间$/;"	m	struct:REC	access:public
+input	tmp/a.cpp	/^void input()$/;"	f	signature:()
+input	tmp/b.cpp	/^void input(); $/;"	p	file:	signature:()
+interval	REC.h	/^    int interval;               \/\/ 连接时间间隔$/;"	m	struct:REC	access:public
+main	data_input.cpp	/^int main()$/;"	f	signature:()
+main	experiment_test.cpp	/^int main()$/;"	f	signature:()
+main	tmp/b.cpp	/^int main()$/;"	f	signature:()
+make	data_input.cpp	/^REC make(int ID1, int ID2, int start_time, int end_time, int num, int interval)$/;"	f	signature:(int ID1, int ID2, int start_time, int end_time, int num, int interval)
+num	REC.h	/^    int num;                    \/\/ 连接编号$/;"	m	struct:REC	access:public
+simulation_time_based	experiment_test.cpp	/^int simulation_time_based()$/;"	f	signature:()
+start_time	REC.h	/^    int start_time, end_time;   \/\/ 连接开始和结束时间$/;"	m	struct:REC	access:public
+state	REC.h	/^    int state;                  \/\/ 状态.表明该节点为支配节点或被支配节点.用概率表示?$/;"	m	struct:NODE	access:public
+time_cmp	data_input.cpp	/^bool time_cmp(const REC& t1, const REC& t2)$/;"	f	signature:(const REC& t1, const REC& t2)
