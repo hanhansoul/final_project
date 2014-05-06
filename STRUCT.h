@@ -19,12 +19,18 @@
 #include <ctime>
 #include <cstring>
 
-#define VOTE_K 3
+#define VOTE_K 3    // 投票种类
+#define MAXN 100    // iMote设备数
 
 using namespace std; 
 
 struct REC                      // 记录连接事件
 {
+    REC():ID1(0), ID2(0), start_time(0), end_time(0), num(0), interval(0)
+    {
+
+    }
+
     int ID1;                    // 主动连接设备ID
     int ID2;                    // 被连接设备ID
     int start_time, end_time;   // 连接开始和结束时间
@@ -33,11 +39,24 @@ struct REC                      // 记录连接事件
 }; 
 
 struct VOTE{                    // 记录获得的投票
+    VOTE()
+    {
+        for(int i = 0; i < VOTE_K; i++) v[i] = 0; 
+    }
+
     int v[VOTE_K]; 
 }; 
 
-struct NODE
+struct NODE                     // NODE表示一个节点中包含的数据结构和内容.
 { 
+    NODE():state(0)
+    {
+        while( ! Q_max_k_heap.empty()) Q_max_k_heap.pop(); 
+        while( ! Q_vote_rev.empty()) Q_vote_rev.pop(); 
+        M_contacts_rec.clear(); 
+        M_adj_vote.clear(); 
+    }
+
     /* 
        节点状态
     */ 

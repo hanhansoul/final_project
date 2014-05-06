@@ -30,7 +30,9 @@ using namespace std;
 #include "STRUCT.h"
 
 extern vector < REC > Q_contact_rec_time_based; 
+extern vector < NODE > Q_node_rec;                     // 表示每一个节点
 int data_input(); 
+
 
 int simulation_time_based()
 {
@@ -43,7 +45,7 @@ int simulation_time_based()
         int end_time = tmp.end_time;            // 连接结束时间
         int num = tmp.num;                      // 连接编号
         int interval = tmp.num;                 // 连接时间间隔
-
+        
     }
     return 0; 
 }

@@ -49,16 +49,15 @@ using namespace std;
  *
  * */
 
-#define INPUT_DATA_FILE "contacts.Exp6.dat"
-// #define INPUT_DATA_FILE "c.dat"
-#define MAXN 100    // iMote设备数
+#define INPUT_DATA_FILE "./tmp/contacts.Exp6.dat"
 
+// #define INPUT_DATA_FILE "c.dat"
 #include "STRUCT.h"
 
-vector < REC > Q_contact_rec_node_based[MAXN];  // 根据节点来记录连接
-vector < REC > Q_contact_rec_time_based;        // 根据时间轴来记录连接
+extern vector < REC > Q_contact_rec_node_based[MAXN];  // 根据节点来记录连接
+extern vector < REC > Q_contact_rec_time_based;        // 根据时间轴来记录连接
 
-REC make(int ID1, int ID2, int start_time, int end_time, int num, int interval)
+REC assign(int ID1, int ID2, int start_time, int end_time, int num, int interval)
 {
     // 使用函数比使用构造函数要快一些?
     REC tmp; 
@@ -98,7 +97,7 @@ int data_input()
 
     while(scanf("%d%d%d%d%d%d", &ID1, &ID2, &start_time, &end_time, &num, &interval) != EOF)
     {
-        REC tmp = make(ID1, ID2, start_time, end_time, num, interval); 
+        REC tmp = assign(ID1, ID2, start_time, end_time, num, interval); 
         Q_contact_rec_node_based[ID1].push_back(tmp); 
         Q_contact_rec_time_based.push_back(tmp); 
     }

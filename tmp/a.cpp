@@ -22,10 +22,11 @@
 
 using namespace std;
 
+#include "q.h"
+
 /*
  * */
 
-int a; 
 void input()
 {
     cin >> a; 
