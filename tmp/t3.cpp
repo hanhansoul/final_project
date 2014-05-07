@@ -11,17 +11,17 @@ struct NODE
 
 int main ()
 {
-  queue<NODE> myqueue;
+  queue<int> myqueue;
 
-  myqueue.push(NODE());
-  myqueue.push(NODE());
+  myqueue.push(10);
+  myqueue.push(20);
 
-  std::cout << "myqueue.front() is now " << myqueue.front().v[0] << '\n';
+  std::cout << "myqueue.front() is now " << myqueue.front() << '\n';
 
-  myqueue.front().v[0]++; 
+  myqueue.front()++; 
   // myqueue.front() -= myqueue.back();    // 77-16=61
 
-  std::cout << "myqueue.front() is now " << myqueue.front().v[0] << '\n';
+  std::cout << "myqueue.front() is now " << myqueue.front() << '\n';
 
   return 0;
 }

@@ -1,27 +1,3 @@
-#include <vector>
-#include <list>
-#include <map>
-#include <set>
-#include <queue>
-#include <deque>
-#include <stack>
-#include <bitset>
-#include <algorithm>
-#include <functional>
-#include <numeric>
-#include <utility>
-#include <sstream>
-#include <iostream>
-#include <iomanip>
-#include <cstdio>
-#include <cmath>
-#include <cstdlib>
-#include <ctime>
-#include <cstring>
-#define DEBUG 0
-
-using namespace std;
-
 /*
  * 从contact.dat中读入数据.
  * contact.dat记录了实验过程中, 任意一对节点间的接触.
@@ -52,7 +28,7 @@ using namespace std;
 #define INPUT_DATA_FILE "./tmp/contacts.Exp6.dat"
 
 // #define INPUT_DATA_FILE "c.dat"
-#include "STRUCT.h"
+#include "NODE.h"
 
 extern vector < REC > Q_contact_rec_node_based[MAXN];  // 根据节点来记录连接
 extern vector < REC > Q_contact_rec_time_based;        // 根据时间轴来记录连接
