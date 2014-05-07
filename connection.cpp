@@ -23,6 +23,8 @@
 using namespace std;
 
 /*
+ * 处理每一次连接事件
+ *
  * */
 
 #include "REC.h"

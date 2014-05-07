@@ -38,6 +38,7 @@ int simulation_time_based()
 {
     for(int i = 0; i < (int)Q_contact_rec_time_based.size(); i++)
     {
+        // connection 一次连接
         REC tmp = Q_contact_rec_time_based[i];  // tmp表示一次连接事件
         int ID1 = tmp.ID1;                      // 主动连接设备ID
         int ID2 = tmp.ID2;                      // 被连接设备ID
@@ -51,7 +52,7 @@ int simulation_time_based()
         NODE &node2 = Q_node_rec[ID2]; 
 
         // ID1
-        // 更新 M_contacts_rec, 从Q_max_k_heap中选出最大的K组.
+        // 更新 M_contacts_rec, 从Q_max_k_heap中选出最大的k组.
         int k = ++node1.M_contacts_rec[ID2];            // 增加一次连接计数
         bool vote_for_ID2 = false;                      // 是否向ID2投票
         int vote_level = 0;                             // 选票类型
@@ -81,8 +82,10 @@ int simulation_time_based()
         // ID2
         if(vote_for_ID2)        // 如果ID1向ID2投票
         {
-            // node2.Q_vote_rev
+            // node2.Q_vote_rev *** 
+            node2.Q_vote_rev.front().v[vote_level]++;
             // node2.tot_vote
+            node2.tot_vote.v[vote_level]++; 
         }
         // *修改:判断是否在表中
         node2.M_adj_vote[ID1] = node1.tot_vote; 

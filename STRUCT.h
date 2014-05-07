@@ -19,9 +19,11 @@
 #include <ctime>
 #include <cstring>
 
-#define VOTE_K 3    // 投票种类
-#define MAXN 100    // iMote设备数, 节点编号从1开始
 #define MP(a, b) make_pair(a, b)
+
+#define VOTE_K 3                // 投票种类
+#define MAXN 100                // iMote设备数, 节点编号从1开始
+#define INTERVAL_TIME 100       // 投票淘汰间隔时间
 
 using namespace std; 
 
@@ -40,12 +42,13 @@ struct REC                      // 记录连接事件
 }; 
 
 struct VOTE{                    // 记录获得的投票
-    VOTE()
+    VOTE():time(0)
     {
         for(int i = 0; i < VOTE_K; i++) v[i] = 0; 
     }
 
-    int v[VOTE_K]; 
+    int v[VOTE_K];              // 各类票数
+    int time;                   // 该轮投票时间, tot_vote中无用
 }; 
 
 struct NODE                     // NODE表示一个节点中包含的数据结构和内容.
@@ -84,4 +87,11 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
 
 }; 
 
+struct MSG                              // 一次连接传递的信息
+{
+    int state;                          // 主动连接节点的状态
+    VOTE vote;                          // 主动连接节点获得的投票
+    bool vote_for;                      // 是否投票
+    int vote_level;                     // 投票种类
+}; 
 
