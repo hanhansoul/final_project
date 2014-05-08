@@ -1,11 +1,14 @@
 #include "NODE.h"
 
+int init(); 
+int data_input(); 
+int simulation_time_based(); 
+
 int main()
 {
-    #if DEBUG
-    freopen("input_data", "r", stdin); 
-    #endif
-
+    init(); 
+    data_input(); 
+    simulation_time_based(); 
     return 0;
 }
 

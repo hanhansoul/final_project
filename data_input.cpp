@@ -25,7 +25,8 @@
  *
  * */
 
-#define INPUT_DATA_FILE "./tmp/contacts.Exp6.dat"
+// #define INPUT_DATA_FILE "./tmp/contacts.Exp6.dat"
+#define INPUT_DATA_FILE "c.dat"
 
 // #define INPUT_DATA_FILE "c.dat"
 #include "NODE.h"
@@ -63,7 +64,12 @@ int data_input()
     char * input_data_file = 0;
     if( ! input_data_file)
         input_data_file = (char *)INPUT_DATA_FILE; 
-    freopen(input_data_file, "r", stdin); 
+    FILE * fin = fopen(input_data_file, "r"); 
+    if( ! fin) 
+    {
+        printf("file open failed.\n"); 
+        return -1; 
+    }
 
     int ID1;                    // 主动连接设备ID
     int ID2;                    // 被连接设备ID
@@ -71,7 +77,7 @@ int data_input()
     int num;                    // 连接编号
     int interval;               // 连接时间间隔
 
-    while(scanf("%d%d%d%d%d%d", &ID1, &ID2, &start_time, &end_time, &num, &interval) != EOF)
+    while(fscanf(fin, "%d%d%d%d%d%d", &ID1, &ID2, &start_time, &end_time, &num, &interval) != EOF)
     {
         REC tmp = assign(ID1, ID2, start_time, end_time, num, interval); 
         Q_contact_rec_node_based[ID1].push_back(tmp); 
@@ -86,6 +92,8 @@ int data_input()
 //        REC tmp = Q_contact_rec_time_based[i]; 
 //        printf("%d\t%d\t%d\t%d\t%d\t%d\n", tmp.ID1, tmp.ID2, tmp.start_time, tmp.end_time, tmp.num, tmp.interval); 
 //    }
+//
+    fclose(fin); 
 
     return 0;
 }

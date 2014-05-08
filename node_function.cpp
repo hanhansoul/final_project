@@ -8,12 +8,19 @@
 
 int NODE::vote_expire()                 // 淘汰超过时间间隔的投票
 {
-    while(duration - Q_vote_rev.front().time >= INTERVAL_TIME)
+    while(!Q_vote_rev.empty() && duration - Q_vote_rev.front().time >= INTERVAL_TIME)
     {
         for(int i = 0; i < VOTE_K; i++)
             tot_vote.v[i] = Q_vote_rev.front().v[i]; 
         Q_vote_rev.pop(); 
     }
+    return 0; 
+}
+
+int NODE::update(int current_time)
+{
+    duration = current_time; 
+    vote_expire(); 
     return 0; 
 }
 
@@ -32,6 +39,8 @@ int NODE::be_voted(int from_ID, MSG msg)             // 被投票
 {
     if(msg.voting)
     {
+        if(Q_vote_rev.empty() || duration - Q_vote_rev.back().time >= INTERVAL_TIME)
+            Q_vote_rev.push(VOTE(duration)); 
         Q_vote_rev.back().v[vote_level]++;
         tot_vote.v[vote_level]++; 
     }

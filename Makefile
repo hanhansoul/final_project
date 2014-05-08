@@ -3,7 +3,7 @@ all: main
 main: main.o experiment_test.o data_input.o initialization.o node_function.o connection.o STRUCT.h NODE.h
 	g++ -g main.o experiment_test.o data_input.o initialization.o node_function.o connection.o STRUCT.h NODE.h -o main
 
-main.o: main.cpp
+main.o: main.cpp 
 	g++ -g -c main.cpp
 
 experiment_test.o: experiment_test.cpp
@@ -22,4 +22,4 @@ connection.o: connection.cpp NODE.h
 	g++ -g -c connection.cpp 
 
 clean:
-	rm *o *gch main
+	rm *o main

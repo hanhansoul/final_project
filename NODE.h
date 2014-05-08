@@ -48,6 +48,7 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
     int be_voted(int from_ID, MSG msg); 
     int connect(int ID); 
     int game(); 
+    int update(int current_time); 
 
 }; 
 

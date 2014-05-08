@@ -49,7 +49,10 @@ struct VOTE{                    // 记录获得的投票
     {
         memset(0, sizeof(v), 0); 
     }
-
+    VOTE(int t):time(t)
+    {
+        memset(0, sizeof(v), 0); 
+    }
     int v[VOTE_K];              // 各类票数
     int time;                   // 该轮投票时间, tot_vote中无用
 }; 
