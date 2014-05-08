@@ -30,13 +30,34 @@ int NODE::update(int current_time)
     vote_expire(current_time); 
 
     // 根据投票更新节点状态
-    // Q_max_k_heap
-    // M_adj_node
+    // I.
+    // Q_max_k_heap M_adj_node
+    for(int i = 0; i < VOTE_K; i++)
+    {
+        int tID = Q_max_k_heap[i].first; 
+        if(M_adj_node.count(tID))
+        {
+            if(is_dominator(M_adj_node[tID]))
+            {
+                // 节点投票的节点为DOR, DEE增大.
+            }else
+            {
+                // 节点投票的节点为DEE, DOR增大.
+            }
+        }else 
+        {
+            // 节点的投票的节点信息缺失
+        }
+    }
 
+    // II.
+    // tot_vote
     for(int i = 0; i < VOTE_K; i++)
     {
 
     }
+    last_tot_vote = tot_vote; 
+
     return 0; 
 }
 
@@ -70,7 +91,7 @@ int NODE::connect(int ID)               // 向其他节点发出连接, 根据�
     voting = false;                     // 是否向该节点投票
     vote_level = 0;                     // 选票类型
 
-    // 选出前k多连接次数的节点
+    // 更新Q_max_k_heap, 并选出前k多连接次数的节点
     int i = 0; 
     for(vector < pair < int, int > >::iterator it = Q_max_k_heap.begin(); it != Q_max_k_heap.end(); it++, i++)
         if(k >= it->second) 
@@ -94,6 +115,11 @@ int NODE::connect(int ID)               // 向其他节点发出连接, 根据�
         }
     }
     return 0; 
+}
+
+bool NODE::is_dominator(int state)
+{
+    return state >= 50 ? true : false; 
 }
 
 //int NODE::game()              // 博弈, 确定状态

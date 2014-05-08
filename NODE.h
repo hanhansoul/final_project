@@ -26,7 +26,7 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
        每发生一次连接, 便堆M_contacts_rec进行更新, 同时更新max_k_heap中的内容.
     */ 
     map < int, int > M_contacts_rec;            // 记录该节点与其他节点的连接次数. <i, j>与ID为i的节点连接了j次.
-    vector < pair < int, int > > Q_max_k_heap;  // 保存前k大的数. 
+    vector < pair < int, int > > Q_max_k_heap;  // 保存前k大的数. < i, j > ===== < ID, 连接次数>
 
     // vote 处理向其他节点投票
     bool voting; 
@@ -37,17 +37,19 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
        然后节点通过获得的信息, 更新Q_vote_rev, M_adj_node. 
     */ 
     VOTE tot_vote;                      // 当前节点所获得的各类票总数.
+    VOTE last_tot_vote;                 // 上一次更新时的票数, 用于与当前票数进行比较
     queue < VOTE > Q_vote_rev;          // 节点获得投票, 分时间段间, 将该段时间内获得的票加入队首, 将过期的票从队尾去除.
     map < int, int > M_adj_node;        // 附近节点状态.该信息不是实时的.
     int adj_dor_num;                    // 附近支配节点数
 
     // functions
     int vote_expire(int current_time); 
-    int update(int current_time); 
-    int update_time(int current_time); 
     int vote_for(int to_ID, MSG &msg); 
     int be_voted(int from_ID, MSG msg); 
     int connect(int ID); 
+    int update(int current_time); 
+    int update_time(int current_time); 
+    bool is_dominator(int state);       // 判断状态state是否为支配节点
 
 }; 
 
