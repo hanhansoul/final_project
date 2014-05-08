@@ -6,21 +6,37 @@
 
 #include "NODE.h"
 
-int NODE::vote_expire()                 // 淘汰超过时间间隔的投票
+int NODE::vote_expire(int current_time)                 // 淘汰超过时间间隔的投票
 {
-    while(!Q_vote_rev.empty() && duration - Q_vote_rev.front().time >= INTERVAL_TIME)
+    while(!Q_vote_rev.empty() && current_time - Q_vote_rev.front().time >= RESERVE_TIME)
     {
         for(int i = 0; i < VOTE_K; i++)
-            tot_vote.v[i] = Q_vote_rev.front().v[i]; 
+            tot_vote.v[i] -= Q_vote_rev.front().v[i]; 
         Q_vote_rev.pop(); 
     }
     return 0; 
 }
 
-int NODE::update(int current_time)
+int NODE::update_time(int current_time)
 {
     duration = current_time; 
-    vote_expire(); 
+    return 0; 
+}
+
+int NODE::update(int current_time)
+{
+    // update投票, 淘汰超过保留时间的投票.
+    update_time(current_time); 
+    vote_expire(current_time); 
+
+    // 根据投票更新节点状态
+    // Q_max_k_heap
+    // M_adj_node
+
+    for(int i = 0; i < VOTE_K; i++)
+    {
+
+    }
     return 0; 
 }
 
@@ -29,7 +45,6 @@ int NODE::vote_for(int to_ID, MSG &msg)              // 向其他节点发送信
     msg.ID1 = ID; 
     msg.ID2 = to_ID;  
     msg.state = state; 
-    msg.vote = tot_vote; 
     msg.voting = voting; 
     msg.vote_level = vote_level; 
     return 0; 
@@ -44,18 +59,17 @@ int NODE::be_voted(int from_ID, MSG msg)             // 被投票
         Q_vote_rev.back().v[vote_level]++;
         tot_vote.v[vote_level]++; 
     }
-    M_adj_vote[msg.ID1] = msg.vote; 
+    M_adj_node[msg.ID1] = msg.state; 
     return 0; 
 }
 
 int NODE::connect(int ID)               // 向其他节点发出连接, 根据节点ID连接, ID即为被连接节点ID
 {
-    // 需要先vote_expire()
     // 更新 M_contacts_rec, 从Q_max_k_heap中选出最大的k组.
-    
     int k = ++M_contacts_rec[ID];       // 增加一次连接计数
-    voting = false;                   // 是否向该节点投票
+    voting = false;                     // 是否向该节点投票
     vote_level = 0;                     // 选票类型
+
     // 选出前k多连接次数的节点
     int i = 0; 
     for(vector < pair < int, int > >::iterator it = Q_max_k_heap.begin(); it != Q_max_k_heap.end(); it++, i++)
@@ -82,8 +96,8 @@ int NODE::connect(int ID)               // 向其他节点发出连接, 根据�
     return 0; 
 }
 
-int NODE::game()              // 博弈, 确定状态
-{
-    return 0; 
-}
+//int NODE::game()              // 博弈, 确定状态
+//{
+//    return 0; 
+//}
 

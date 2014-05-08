@@ -29,6 +29,7 @@ using namespace std;
 #define VOTE_K 3                // 投票种类, 0, 1, 2 ... 类票
 #define MAXN 100                // iMote设备数, 节点编号从1开始
 #define INTERVAL_TIME 100       // 投票淘汰间隔时间
+#define RESERVE_TIME 1000       // 投票保留间隔时间
 
 struct REC                      // 记录连接事件
 {
@@ -62,7 +63,7 @@ struct MSG                              // 一次连接传递的信息
     int ID1; 
     int ID2; 
     int state;                          // 主动连接节点的状态
-    VOTE vote;                          // 主动连接节点票数
+//  VOTE vote;                          // 主动连接节点票数
     bool voting;                        // 是否投票
     int vote_level;                     // 投票种类
 }; 

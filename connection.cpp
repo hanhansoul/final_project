@@ -24,23 +24,17 @@ int connection(REC record)
         return -1; 
     }
 
-    // ID1 --> ID2
-    NODE &node1 = Q_node_rec[ID1];              // 连接节点对的节点信息
-    NODE &node2 = Q_node_rec[ID2]; 
+    // update
+    Q_node_rec[ID1].update(start_time); 
+    Q_node_rec[ID2].update(start_time); 
+
     MSG msg; 
-
-    // node1.duration = node2.duration = start_time;    // 更新设备运行时间
-
+    // ID1 --> ID2
     // ID1
-    node1.update(start_time); 
-    node1.connect(ID2); 
-    node1.vote_for(ID2, msg); 
-    node1.game(); 
-
+    Q_node_rec[ID1].connect(ID2); 
+    Q_node_rec[ID1].vote_for(ID2, msg); 
     // ID2 
-    node2.update(start_time); 
-    node2.be_voted(ID1, msg); 
-    node2.game(); 
+    Q_node_rec[ID2].be_voted(ID1, msg); 
 
     return 0; 
 }
