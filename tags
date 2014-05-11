@@ -20,10 +20,19 @@ DEBUG	tmp/t2.cpp	21;"	d	file:
 DEBUG	tmp/t4.cpp	21;"	d	file:
 DEBUG	tmp/t5.cpp	21;"	d	file:
 DEBUG	tmp/t6.cpp	21;"	d	file:
+EVENT_REC	STRUCT.h	/^    EVENT_REC():ID1(0), ID2(0), start_time(0), end_time(0), num(0), interval(0)$/;"	f	struct:EVENT_REC	access:public	signature:()
+EVENT_REC	STRUCT.h	/^struct EVENT_REC                      \/\/ 记录连接事件$/;"	s
+EVENT_REC::EVENT_REC	STRUCT.h	/^    EVENT_REC():ID1(0), ID2(0), start_time(0), end_time(0), num(0), interval(0)$/;"	f	struct:EVENT_REC	access:public	signature:()
+EVENT_REC::ID1	STRUCT.h	/^    int ID1;                    \/\/ 主动连接设备ID$/;"	m	struct:EVENT_REC	access:public
+EVENT_REC::ID2	STRUCT.h	/^    int ID2;                    \/\/ 被连接设备ID$/;"	m	struct:EVENT_REC	access:public
+EVENT_REC::end_time	STRUCT.h	/^    int start_time, end_time;   \/\/ 连接开始和结束时间$/;"	m	struct:EVENT_REC	access:public
+EVENT_REC::interval	STRUCT.h	/^    int interval;               \/\/ 连接时间间隔$/;"	m	struct:EVENT_REC	access:public
+EVENT_REC::num	STRUCT.h	/^    int num;                    \/\/ 连接编号$/;"	m	struct:EVENT_REC	access:public
+EVENT_REC::start_time	STRUCT.h	/^    int start_time, end_time;   \/\/ 连接开始和结束时间$/;"	m	struct:EVENT_REC	access:public
 ID	NODE.h	/^    int ID;                             \/\/ 该节点ID$/;"	m	struct:NODE	access:public
-ID1	STRUCT.h	/^    int ID1;                    \/\/ 主动连接设备ID$/;"	m	struct:REC	access:public
+ID1	STRUCT.h	/^    int ID1;                    \/\/ 主动连接设备ID$/;"	m	struct:EVENT_REC	access:public
 ID1	STRUCT.h	/^    int ID1; $/;"	m	struct:MSG	access:public
-ID2	STRUCT.h	/^    int ID2;                    \/\/ 被连接设备ID$/;"	m	struct:REC	access:public
+ID2	STRUCT.h	/^    int ID2;                    \/\/ 被连接设备ID$/;"	m	struct:EVENT_REC	access:public
 ID2	STRUCT.h	/^    int ID2; $/;"	m	struct:MSG	access:public
 INPUT_DATA_FILE	data_input.cpp	29;"	d	file:
 INTERVAL_TIME	STRUCT.h	31;"	d
@@ -36,9 +45,13 @@ MSG	STRUCT.h	/^struct MSG                              \/\/ 一次连接传递�
 MSG::ID1	STRUCT.h	/^    int ID1; $/;"	m	struct:MSG	access:public
 MSG::ID2	STRUCT.h	/^    int ID2; $/;"	m	struct:MSG	access:public
 MSG::state	STRUCT.h	/^    int state;                          \/\/ 主动连接节点的状态$/;"	m	struct:MSG	access:public
+MSG::vote	STRUCT.h	/^    VOTE vote;                          \/\/ 主动连接节点票数$/;"	m	struct:MSG	access:public
 MSG::vote_level	STRUCT.h	/^    int vote_level;                     \/\/ 投票种类$/;"	m	struct:MSG	access:public
 MSG::voting	STRUCT.h	/^    bool voting;                        \/\/ 是否投票$/;"	m	struct:MSG	access:public
-M_adj_node	NODE.h	/^    map < int, int > M_adj_node;        \/\/ 附近节点状态.该信息不是实时的.$/;"	m	struct:NODE	access:public
+MSG_REC	STRUCT.h	/^struct MSG_REC$/;"	s
+MSG_REC::state	STRUCT.h	/^    int state; $/;"	m	struct:MSG_REC	access:public
+MSG_REC::vote	STRUCT.h	/^    VOTE vote; $/;"	m	struct:MSG_REC	access:public
+M_adj_node	NODE.h	/^    map < int, MSG_REC > M_adj_node;    \/\/ 附近节点状态.该信息不是实时的.$/;"	m	struct:NODE	access:public
 M_contacts_rec	NODE.h	/^    map < int, int > M_contacts_rec;            \/\/ 记录该节点与其他节点的连接次数. <i, j>与ID为i的节点连接了j次.$/;"	m	struct:NODE	access:public
 NODE	NODE.h	/^    NODE():state(0), duration(0), voting(false), vote_level(0), ID(0) $/;"	f	struct:NODE	access:public	signature:()
 NODE	NODE.h	/^struct NODE                     \/\/ NODE表示一个节点中包含的数据结构和内容.$/;"	s
@@ -48,12 +61,12 @@ NODE	tmp/t1.cpp	/^    NODE(int x, int y):a(x), b(y)$/;"	f	struct:NODE	access:pub
 NODE	tmp/t1.cpp	/^struct NODE$/;"	s	file:
 NODE	tmp/t3.cpp	/^struct NODE$/;"	s	file:
 NODE::ID	NODE.h	/^    int ID;                             \/\/ 该节点ID$/;"	m	struct:NODE	access:public
-NODE::M_adj_node	NODE.h	/^    map < int, int > M_adj_node;        \/\/ 附近节点状态.该信息不是实时的.$/;"	m	struct:NODE	access:public
+NODE::M_adj_node	NODE.h	/^    map < int, MSG_REC > M_adj_node;    \/\/ 附近节点状态.该信息不是实时的.$/;"	m	struct:NODE	access:public
 NODE::M_contacts_rec	NODE.h	/^    map < int, int > M_contacts_rec;            \/\/ 记录该节点与其他节点的连接次数. <i, j>与ID为i的节点连接了j次.$/;"	m	struct:NODE	access:public
 NODE::NODE	NODE.h	/^    NODE():state(0), duration(0), voting(false), vote_level(0), ID(0) $/;"	f	struct:NODE	access:public	signature:()
 NODE::NODE	tmp/t1.cpp	/^    NODE():a(0), b(0)$/;"	f	struct:NODE	access:public	signature:()
 NODE::NODE	tmp/t1.cpp	/^    NODE(int x, int y):a(x), b(y)$/;"	f	struct:NODE	access:public	signature:(int x, int y)
-NODE::Q_max_k_heap	NODE.h	/^    vector < pair < int, int > > Q_max_k_heap;  \/\/ 保存前k大的数. $/;"	m	struct:NODE	access:public
+NODE::Q_max_k_heap	NODE.h	/^    vector < pair < int, int > > Q_max_k_heap;  \/\/ 保存前k大的数. < i, j > ===== < ID, 连接次数>$/;"	m	struct:NODE	access:public
 NODE::Q_vote_rev	NODE.h	/^    queue < VOTE > Q_vote_rev;          \/\/ 节点获得投票, 分时间段间, 将该段时间内获得的票加入队首, 将过期的票从队尾去除.$/;"	m	struct:NODE	access:public
 NODE::a	tmp/q.h	/^    int a; $/;"	m	struct:NODE	access:public
 NODE::a	tmp/t1.cpp	/^    int a; $/;"	m	struct:NODE	file:	access:public
@@ -68,6 +81,7 @@ NODE::duration	NODE.h	/^    int duration;                       \/\/ 节点启�
 NODE::init	tmp/q.h	/^    int init(int a, int b){$/;"	f	struct:NODE	access:public	signature:(int a, int b)
 NODE::is_dominator	NODE.h	/^    bool is_dominator(int state);       \/\/ 判断状态state是否为支配节点$/;"	p	struct:NODE	access:public	signature:(int state)
 NODE::is_dominator	node_function.cpp	/^bool NODE::is_dominator(int state)$/;"	f	class:NODE	signature:(int state)
+NODE::last_tot_vote	NODE.h	/^    VOTE last_tot_vote;                 \/\/ 上一次更新时的票数, 用于与当前票数进行比较$/;"	m	struct:NODE	access:public
 NODE::state	NODE.h	/^    int state;                          \/\/ 状态.表明该节点为支配节点或被支配节点.用概率表示?$/;"	m	struct:NODE	access:public
 NODE::tot_vote	NODE.h	/^    VOTE tot_vote;                      \/\/ 当前节点所获得的各类票总数.$/;"	m	struct:NODE	access:public
 NODE::update	NODE.h	/^    int update(int current_time); $/;"	p	struct:NODE	access:public	signature:(int current_time)
@@ -85,18 +99,9 @@ NODE_H_H	NODE.h	4;"	d
 Q	tmp/t1.cpp	/^vector < NODE > Q; $/;"	v
 Q_contact_rec_node_based	initialization.cpp	/^vector < REC > Q_contact_rec_node_based[MAXN];      \/\/ 根据节点来记录连接$/;"	v
 Q_contact_rec_time_based	initialization.cpp	/^vector < REC > Q_contact_rec_time_based;            \/\/ 根据时间轴来记录连接$/;"	v
-Q_max_k_heap	NODE.h	/^    vector < pair < int, int > > Q_max_k_heap;  \/\/ 保存前k大的数. $/;"	m	struct:NODE	access:public
+Q_max_k_heap	NODE.h	/^    vector < pair < int, int > > Q_max_k_heap;  \/\/ 保存前k大的数. < i, j > ===== < ID, 连接次数>$/;"	m	struct:NODE	access:public
 Q_node_rec	initialization.cpp	/^vector < NODE > Q_node_rec;                         \/\/ 表示每一个节点$/;"	v
 Q_vote_rev	NODE.h	/^    queue < VOTE > Q_vote_rev;          \/\/ 节点获得投票, 分时间段间, 将该段时间内获得的票加入队首, 将过期的票从队尾去除.$/;"	m	struct:NODE	access:public
-REC	STRUCT.h	/^    REC():ID1(0), ID2(0), start_time(0), end_time(0), num(0), interval(0)$/;"	f	struct:REC	access:public	signature:()
-REC	STRUCT.h	/^struct REC                      \/\/ 记录连接事件$/;"	s
-REC::ID1	STRUCT.h	/^    int ID1;                    \/\/ 主动连接设备ID$/;"	m	struct:REC	access:public
-REC::ID2	STRUCT.h	/^    int ID2;                    \/\/ 被连接设备ID$/;"	m	struct:REC	access:public
-REC::REC	STRUCT.h	/^    REC():ID1(0), ID2(0), start_time(0), end_time(0), num(0), interval(0)$/;"	f	struct:REC	access:public	signature:()
-REC::end_time	STRUCT.h	/^    int start_time, end_time;   \/\/ 连接开始和结束时间$/;"	m	struct:REC	access:public
-REC::interval	STRUCT.h	/^    int interval;               \/\/ 连接时间间隔$/;"	m	struct:REC	access:public
-REC::num	STRUCT.h	/^    int num;                    \/\/ 连接编号$/;"	m	struct:REC	access:public
-REC::start_time	STRUCT.h	/^    int start_time, end_time;   \/\/ 连接开始和结束时间$/;"	m	struct:REC	access:public
 RESERVE_TIME	STRUCT.h	32;"	d
 STRUCT_H_H	STRUCT.h	2;"	d
 VOTE	STRUCT.h	/^    VOTE():time(0)$/;"	f	struct:VOTE	access:public	signature:()
@@ -121,12 +126,12 @@ be_voted	NODE.h	/^    int be_voted(int from_ID, MSG msg); $/;"	p	struct:NODE	acc
 be_voted	node_function.cpp	/^int NODE::be_voted(int from_ID, MSG msg)             \/\/ 被投票$/;"	f	class:NODE	signature:(int from_ID, MSG msg)
 connect	NODE.h	/^    int connect(int ID); $/;"	p	struct:NODE	access:public	signature:(int ID)
 connect	node_function.cpp	/^int NODE::connect(int ID)               \/\/ 向其他节点发出连接, 根据节点ID连接, ID即为被连接节点ID$/;"	f	class:NODE	signature:(int ID)
-connection	connection.cpp	/^int connection(REC record)$/;"	f	signature:(REC record)
-connection	experiment_test.cpp	/^int connection(REC record); $/;"	p	file:	signature:(REC record)
+connection	connection.cpp	/^int connection(EVENT_REC record)$/;"	f	signature:(EVENT_REC record)
+connection	experiment_test.cpp	/^int connection(EVENT_REC record); $/;"	p	file:	signature:(EVENT_REC record)
 data_input	data_input.cpp	/^int data_input()$/;"	f	signature:()
 data_input	main.cpp	/^int data_input(); $/;"	p	file:	signature:()
 duration	NODE.h	/^    int duration;                       \/\/ 节点启动后持续运作的时间 $/;"	m	struct:NODE	access:public
-end_time	STRUCT.h	/^    int start_time, end_time;   \/\/ 连接开始和结束时间$/;"	m	struct:REC	access:public
+end_time	STRUCT.h	/^    int start_time, end_time;   \/\/ 连接开始和结束时间$/;"	m	struct:EVENT_REC	access:public
 ext	tmp/t4.cpp	/^int ext; $/;"	v
 fun	tmp/A.h	/^    int fun()$/;"	f	struct:A	access:public	signature:()
 fun	tmp/t4.cpp	/^    int fun()$/;"	f	struct:A	access:public	signature:()
@@ -137,9 +142,10 @@ init	main.cpp	/^int init(); $/;"	p	file:	signature:()
 init	tmp/q.h	/^    int init(int a, int b){$/;"	f	struct:NODE	access:public	signature:(int a, int b)
 input	tmp/a.cpp	/^void input()$/;"	f	signature:()
 input	tmp/b.cpp	/^void input(); $/;"	p	file:	signature:()
-interval	STRUCT.h	/^    int interval;               \/\/ 连接时间间隔$/;"	m	struct:REC	access:public
+interval	STRUCT.h	/^    int interval;               \/\/ 连接时间间隔$/;"	m	struct:EVENT_REC	access:public
 is_dominator	NODE.h	/^    bool is_dominator(int state);       \/\/ 判断状态state是否为支配节点$/;"	p	struct:NODE	access:public	signature:(int state)
 is_dominator	node_function.cpp	/^bool NODE::is_dominator(int state)$/;"	f	class:NODE	signature:(int state)
+last_tot_vote	NODE.h	/^    VOTE last_tot_vote;                 \/\/ 上一次更新时的票数, 用于与当前票数进行比较$/;"	m	struct:NODE	access:public
 main	main.cpp	/^int main()$/;"	f	signature:()
 main	tmp/b.cpp	/^int main()$/;"	f	signature:()
 main	tmp/header_test/test.c	/^int main()$/;"	f
@@ -150,12 +156,13 @@ main	tmp/t3.cpp	/^int main ()$/;"	f	signature:()
 main	tmp/t4.cpp	/^int main()$/;"	f	signature:()
 main	tmp/t5.cpp	/^int main()$/;"	f	signature:()
 main	tmp/t6.cpp	/^int main()$/;"	f	signature:()
-num	STRUCT.h	/^    int num;                    \/\/ 连接编号$/;"	m	struct:REC	access:public
+num	STRUCT.h	/^    int num;                    \/\/ 连接编号$/;"	m	struct:EVENT_REC	access:public
 simulation_time_based	experiment_test.cpp	/^int simulation_time_based()$/;"	f	signature:()
 simulation_time_based	main.cpp	/^int simulation_time_based(); $/;"	p	file:	signature:()
-start_time	STRUCT.h	/^    int start_time, end_time;   \/\/ 连接开始和结束时间$/;"	m	struct:REC	access:public
+start_time	STRUCT.h	/^    int start_time, end_time;   \/\/ 连接开始和结束时间$/;"	m	struct:EVENT_REC	access:public
 state	NODE.h	/^    int state;                          \/\/ 状态.表明该节点为支配节点或被支配节点.用概率表示?$/;"	m	struct:NODE	access:public
 state	STRUCT.h	/^    int state;                          \/\/ 主动连接节点的状态$/;"	m	struct:MSG	access:public
+state	STRUCT.h	/^    int state; $/;"	m	struct:MSG_REC	access:public
 test1	tmp/header_test/test.c	/^extern void test1();$/;"	p	file:
 test1	tmp/header_test/test.h	/^void test1();$/;"	p	signature:()
 test1	tmp/header_test/test1.c	/^void test1()$/;"	f
@@ -172,6 +179,8 @@ update_time	node_function.cpp	/^int NODE::update_time(int current_time)$/;"	f	cl
 v	STRUCT.h	/^    int v[VOTE_K];              \/\/ 各类票数$/;"	m	struct:VOTE	access:public
 v	tmp/t3.cpp	/^    int v[4]; $/;"	m	struct:NODE	file:	access:public
 v	tmp/t4.cpp	/^    int v[10]; $/;"	m	struct:A	file:	access:public
+vote	STRUCT.h	/^    VOTE vote;                          \/\/ 主动连接节点票数$/;"	m	struct:MSG	access:public
+vote	STRUCT.h	/^    VOTE vote; $/;"	m	struct:MSG_REC	access:public
 vote_expire	NODE.h	/^    int vote_expire(int current_time); $/;"	p	struct:NODE	access:public	signature:(int current_time)
 vote_expire	node_function.cpp	/^int NODE::vote_expire(int current_time)                 \/\/ 淘汰超过时间间隔的投票$/;"	f	class:NODE	signature:(int current_time)
 vote_for	NODE.h	/^    int vote_for(int to_ID, MSG &msg); $/;"	p	struct:NODE	access:public	signature:(int to_ID, MSG &msg)

@@ -5,9 +5,9 @@
 
 #include "NODE.h"
 
-extern vector < REC > Q_contact_rec_time_based;     // 表示每一次连接
+extern vector < EVENT_REC > Q_contact_rec_time_based;     // 表示每一次连接
 extern vector < NODE > Q_node_rec;                  // 表示每一个节点
-int connection(REC record); 
+int connection(EVENT_REC record); 
 
 int simulation_time_based()
 {

@@ -8,7 +8,7 @@
 
 extern vector < NODE > Q_node_rec;              // 表示每一个节点
 
-int connection(REC record)
+int connection(EVENT_REC record)
 {
     // connection 一次连接
     int ID1 = record.ID1;                       // 主动连接设备ID
@@ -25,14 +25,13 @@ int connection(REC record)
     }
 
     // update
-    Q_node_rec[ID1].update(start_time); 
-    Q_node_rec[ID2].update(start_time); 
+    Q_node_rec[ID1].update_time(start_time); 
+    Q_node_rec[ID2].update_time(start_time); 
 
     MSG msg; 
     // ID1 --> ID2
     // ID1
-    Q_node_rec[ID1].connect(ID2); 
-    Q_node_rec[ID1].vote_for(ID2, msg); 
+    msg = Q_node_rec[ID1].connect(ID2); 
     // ID2 
     Q_node_rec[ID2].be_voted(ID1, msg); 
 

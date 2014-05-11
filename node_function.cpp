@@ -61,16 +61,6 @@ int NODE::update(int current_time)
     return 0; 
 }
 
-int NODE::vote_for(int to_ID, MSG &msg)              // 向其他节点发送信息
-{
-    msg.ID1 = ID; 
-    msg.ID2 = to_ID;  
-    msg.state = state; 
-    msg.voting = voting; 
-    msg.vote_level = vote_level; 
-    return 0; 
-}
-
 int NODE::be_voted(int from_ID, MSG msg)             // 被投票
 {
     if(msg.voting)
@@ -80,11 +70,11 @@ int NODE::be_voted(int from_ID, MSG msg)             // 被投票
         Q_vote_rev.back().v[vote_level]++;
         tot_vote.v[vote_level]++; 
     }
-    M_adj_node[msg.ID1] = msg.state; 
+    M_adj_node[msg.ID1] = MSG_REC(msg.state, msg.vote); 
     return 0; 
 }
 
-int NODE::connect(int ID)               // 向其他节点发出连接, 根据节点ID连接, ID即为被连接节点ID
+MSG NODE::connect(int ID)               // 向其他节点发出连接, 根据节点ID连接, ID即为被连接节点ID
 {
     // 更新 M_contacts_rec, 从Q_max_k_heap中选出最大的k组.
     int k = ++M_contacts_rec[ID];       // 增加一次连接计数
@@ -114,7 +104,7 @@ int NODE::connect(int ID)               // 向其他节点发出连接, 根据�
                 Q_max_k_heap.pop_back(); 
         }
     }
-    return 0; 
+    return MSG(ID, to_ID, state, tot_vote, voting, vote_level); 
 }
 
 bool NODE::is_dominator(int state)

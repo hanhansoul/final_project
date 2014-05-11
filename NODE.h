@@ -39,22 +39,21 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
     VOTE tot_vote;                      // 当前节点所获得的各类票总数.
     VOTE last_tot_vote;                 // 上一次更新时的票数, 用于与当前票数进行比较
     queue < VOTE > Q_vote_rev;          // 节点获得投票, 分时间段间, 将该段时间内获得的票加入队首, 将过期的票从队尾去除.
-    map < int, int > M_adj_node;        // 附近节点状态.该信息不是实时的.
+    map < int, MSG_REC > M_adj_node;    // 附近节点状态.该信息不是实时的.
     int adj_dor_num;                    // 附近支配节点数
 
     // functions
     int vote_expire(int current_time); 
-    int vote_for(int to_ID, MSG &msg); 
     int be_voted(int from_ID, MSG msg); 
-    int connect(int ID); 
+    MSG connect(int ID); 
     int update(int current_time); 
     int update_time(int current_time); 
     bool is_dominator(int state);       // 判断状态state是否为支配节点
 
 }; 
 
-extern vector < REC > Q_contact_rec_node_based[MAXN];      // 根据节点来记录连接
-extern vector < REC > Q_contact_rec_time_based;            // 根据时间轴来记录连接
-extern vector < NODE > Q_node_rec;                         // 表示每一个节点
+extern vector < EVENT_REC > Q_contact_rec_node_based[MAXN];     // 根据节点来记录连接
+extern vector < EVENT_REC > Q_contact_rec_time_based;           // 根据时间轴来记录连接
+extern vector < NODE > Q_node_rec;                              // 表示每一个节点
 
 #endif

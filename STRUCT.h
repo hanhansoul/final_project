@@ -31,9 +31,9 @@ using namespace std;
 #define INTERVAL_TIME 100       // 投票淘汰间隔时间
 #define RESERVE_TIME 1000       // 投票保留间隔时间
 
-struct REC                      // 记录连接事件
+struct EVENT_REC                      // 记录连接事件
 {
-    REC():ID1(0), ID2(0), start_time(0), end_time(0), num(0), interval(0)
+    EVENT_REC():ID1(0), ID2(0), start_time(0), end_time(0), num(0), interval(0)
     {
 
     }
@@ -58,12 +58,40 @@ struct VOTE{                    // 记录获得的投票
     int time;                   // 该轮投票时间, tot_vote中无用
 }; 
 
+struct MSG_REC
+{
+    MSG_REC()
+    {
+
+    }
+    MSG_REC(int state, VOTE vote)
+    {
+        this->vote = vote; 
+        this->state = state; 
+    }
+    VOTE vote; 
+    int state; 
+}; 
+
 struct MSG                              // 一次连接传递的信息
 {
+    MSG()
+    {
+
+    }
+    MSG(int ID1, int ID2, int state, VOTE vote, bool voting, int vote_level)
+    {
+        this->ID1 = ID; 
+        this->ID2 = to_ID;  
+        this->state = state; 
+        this->vote = tot_vote; 
+        this->voting = voting; 
+        this->vote_level = vote_level; 
+    }
     int ID1; 
     int ID2; 
     int state;                          // 主动连接节点的状态
-//  VOTE vote;                          // 主动连接节点票数
+    VOTE vote;                          // 主动连接节点票数
     bool voting;                        // 是否投票
     int vote_level;                     // 投票种类
 }; 
