@@ -14,12 +14,7 @@ int NODE::vote_expire(int current_time)                 // 淘汰超过时间间
             tot_vote.v[i] -= Q_vote_rev.front().v[i]; 
         Q_vote_rev.pop(); 
     }
-    return 0; 
-}
-
-int NODE::update_time(int current_time)
-{
-    duration = current_time; 
+    Q_vote_rev.push(VOTE(current_time)); 
     return 0; 
 }
 
@@ -29,6 +24,8 @@ int NODE::update(int current_time)
     update_time(current_time); 
     vote_expire(current_time); 
 
+    // state增加
+    
     // 根据投票更新节点状态
     // I.
     // Q_max_k_heap M_adj_node
@@ -65,12 +62,20 @@ int NODE::be_voted(int from_ID, MSG msg)             // 被投票
 {
     if(msg.voting)
     {
-        if(Q_vote_rev.empty() || duration - Q_vote_rev.back().time >= INTERVAL_TIME)
-            Q_vote_rev.push(VOTE(duration)); 
-        Q_vote_rev.back().v[vote_level]++;
-        tot_vote.v[vote_level]++; 
+        if(msg.is_jump_vote && state < adj_max_state && msg.vote_level == 0)
+        {
+            jump_vote.v[msg.vote_level]++; 
+        }else
+        {
+            Q_vote_rev.back().v[vote_level]++; 
+            tot_vote.v[vote_level]++; 
+        }
     }
-    M_adj_node[msg.ID1] = MSG_REC(msg.state, msg.vote); 
+    // 二段投票
+    Q_vote_rev.back().v[0] += msg.jump_vote.v[0]; 
+    
+    // 更新M_adj_node
+    M_adj_node[msg.ID1] = MSG_REC(msg.state, msg.vote, msg.adj_max_state); 
     return 0; 
 }
 
@@ -81,7 +86,22 @@ MSG NODE::connect(int ID)               // 向其他节点发出连接, 根据�
     voting = false;                     // 是否向该节点投票
     vote_level = 0;                     // 选票类型
 
+    // 二段投票
+    // jump_vote
+    bool is_jump_vote = false; 
+    MSG_REC t_rec = 0; 
+    if(M_adj_node.count(ID))
+    {
+        t_rec = M_adj_node[ID]; 
+        if(t_rec.adj_max_state > t_rec.state)       // 若B的附近节点的最大state大于B的state, 则A向B的附近节点二段投票而非向B投票.
+            is_jump_vote = true; 
+        if(state > t_rec.state)                     // 若A的state大于B的state, 则不会向B投票.
+            voting = false; 
+    }
+
     // 更新Q_max_k_heap, 并选出前k多连接次数的节点
+    for(vector < pair < int, int > >::iterator it = Q_max_k_heap.begin(); it != Q_max_k_heap.end(); it++)
+
     int i = 0; 
     for(vector < pair < int, int > >::iterator it = Q_max_k_heap.begin(); it != Q_max_k_heap.end(); it++, i++)
         if(k >= it->second) 
@@ -91,25 +111,24 @@ MSG NODE::connect(int ID)               // 向其他节点发出连接, 根据�
             vote_level = i; 
             break; 
         }
-    if( ! voting) 
+
+    if(Q_max_k_heap.size() > VOTE_K)
+        Q_max_k_heap.pop_back(); 
+
+    if(!voting && i < VOTE_K)
     {
-        if(Q_max_k_heap.size() < VOTE_K)
-        {
-            Q_max_k_heap.push_back(MP(ID, k)); 
-            vote_level = Q_max_k_heap.size() - 1; 
-            voting = true; 
-        }else
-        {
-            if(Q_max_k_heap.size() > VOTE_K)
-                Q_max_k_heap.pop_back(); 
-        }
+        Q_max_k_heap.push_back(MP(ID, k)); 
+        voting = true; 
+        vote_level = i; 
     }
-    return MSG(ID, to_ID, state, tot_vote, voting, vote_level); 
+
+    return MSG(ID, to_ID, state, tot_vote, voting, vote_level, adj_max_state, is_jump_vote, jump_vote); 
 }
 
-bool NODE::is_dominator(int state)
+int NODE::update_time(int current_time)
 {
-    return state >= 50 ? true : false; 
+    duration = current_time; 
+    return 0; 
 }
 
 //int NODE::game()              // 博弈, 确定状态

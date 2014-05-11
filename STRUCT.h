@@ -64,13 +64,15 @@ struct MSG_REC
     {
 
     }
-    MSG_REC(int state, VOTE vote)
+    MSG_REC(int state, VOTE vote, int adj_max_state)
     {
         this->vote = vote; 
         this->state = state; 
+        this->adj_max_state = adj_max_state; 
     }
     VOTE vote; 
     int state; 
+    int adj_max_state; 
 }; 
 
 struct MSG                              // 一次连接传递的信息
@@ -79,7 +81,8 @@ struct MSG                              // 一次连接传递的信息
     {
 
     }
-    MSG(int ID1, int ID2, int state, VOTE vote, bool voting, int vote_level)
+
+    MSG(int ID1, int ID2, int state, VOTE vote, bool voting, int vote_level, int adj_max_state, bool is_jump_vote, VOTE jump_vote)
     {
         this->ID1 = ID; 
         this->ID2 = to_ID;  
@@ -87,13 +90,22 @@ struct MSG                              // 一次连接传递的信息
         this->vote = tot_vote; 
         this->voting = voting; 
         this->vote_level = vote_level; 
+        this->adj_max_state = adj_max_state; 
+        this->is_jump_vote = is_jump_vote; 
+        this->jump_vote = jump_vote; 
     }
+
     int ID1; 
     int ID2; 
     int state;                          // 主动连接节点的状态
+
     VOTE vote;                          // 主动连接节点票数
     bool voting;                        // 是否投票
     int vote_level;                     // 投票种类
+    bool is_jump_vote;                  // 二段投票
+    VOTE jump_vote;                     // 该节点的二段投票
+
+    int adj_max_state;                      // 相邻最大状态值
 }; 
 
 #endif
