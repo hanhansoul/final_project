@@ -31,7 +31,7 @@ using namespace std;
 #define INTERVAL_TIME 100       // 投票淘汰间隔时间
 #define RESERVE_TIME 1000       // 投票保留间隔时间
 
-struct EVENT_REC                      // 记录连接事件
+struct EVENT_REC                // 记录连接事件
 {
     EVENT_REC():ID1(0), ID2(0), start_time(0), end_time(0), num(0), interval(0)
     {
@@ -64,12 +64,14 @@ struct MSG_REC
     {
 
     }
+
     MSG_REC(int state, VOTE vote, int adj_max_state)
     {
         this->vote = vote; 
         this->state = state; 
         this->adj_max_state = adj_max_state; 
     }
+
     VOTE vote; 
     int state; 
     int adj_max_state; 
@@ -82,7 +84,7 @@ struct MSG                              // 一次连接传递的信息
 
     }
 
-    MSG(int ID1, int ID2, int state, VOTE vote, bool voting, int vote_level, int adj_max_state, bool is_jump_vote, VOTE jump_vote)
+    MSG(int ID1, int ID2, int state, VOTE vote, bool voting, int vote_level, int adj_max_state, VOTE jump_vote)
     {
         this->ID1 = ID; 
         this->ID2 = to_ID;  
@@ -91,7 +93,6 @@ struct MSG                              // 一次连接传递的信息
         this->voting = voting; 
         this->vote_level = vote_level; 
         this->adj_max_state = adj_max_state; 
-        this->is_jump_vote = is_jump_vote; 
         this->jump_vote = jump_vote; 
     }
 
@@ -102,10 +103,10 @@ struct MSG                              // 一次连接传递的信息
     VOTE vote;                          // 主动连接节点票数
     bool voting;                        // 是否投票
     int vote_level;                     // 投票种类
-    bool is_jump_vote;                  // 二段投票
+    // bool is_jump_vote;                  // 二段投票
     VOTE jump_vote;                     // 该节点的二段投票
 
-    int adj_max_state;                      // 相邻最大状态值
+    int adj_max_state;                  // 相邻最大状态值
 }; 
 
 #endif

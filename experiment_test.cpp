@@ -14,11 +14,6 @@ int simulation_time_based()
     int current_time = 0; 
     int update_time = INTERVAL_TIME; 
 
-//    for(int i = 0; i < (int)Q_contact_rec_time_based.size(); i++)
-//    {
-//        connection(Q_contact_rec_time_based[i]); 
-//    }
-
     for(int i = 0; ; update_time += INTERVAL_TIME)
     {
         // 处理连接

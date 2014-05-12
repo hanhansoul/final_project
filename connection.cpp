@@ -33,7 +33,7 @@ int connection(EVENT_REC record)
     // ID1
     msg = Q_node_rec[ID1].connect(ID2); 
     // ID2 
-    Q_node_rec[ID2].be_voted(ID1, msg); 
+    Q_node_rec[ID2].be_connected(ID1, msg); 
 
     return 0; 
 }
