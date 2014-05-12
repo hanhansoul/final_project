@@ -25,8 +25,8 @@
  *
  * */
 
-// #define INPUT_DATA_FILE "./tmp/contacts.Exp6.dat"
-#define INPUT_DATA_FILE "c.dat"
+#define INPUT_DATA_FILE "data/contacts.Exp6.dat"
+// #define INPUT_DATA_FILE "c.dat"
 
 // #define INPUT_DATA_FILE "c.dat"
 #include "NODE.h"
@@ -52,10 +52,13 @@ int data_input()
     if( ! input_data_file)
         input_data_file = (char *)INPUT_DATA_FILE; 
     FILE * fin = fopen(input_data_file, "r"); 
-    if( ! fin) 
+    FILE * fout = fopen("output", "w"); 
+    if(!fin) 
     {
         printf("file open failed.\n"); 
         return -1; 
+    }else{
+        printf("file open success.\n"); 
     }
 
     int ID1;                    // 主动连接设备ID
@@ -70,17 +73,19 @@ int data_input()
         Q_contact_rec_node_based[ID1].push_back(tmp); 
         Q_contact_rec_time_based.push_back(tmp); 
     }
-
     // 根据时间轴对Q_contact_rec_time_based进行排序
     sort(Q_contact_rec_time_based.begin(), Q_contact_rec_time_based.end(), time_cmp); 
 
-//    for(int i = 0; i < (int)Q_contact_rec_time_based.size(); i++)
-//    {
-//        REC tmp = Q_contact_rec_time_based[i]; 
-//        printf("%d\t%d\t%d\t%d\t%d\t%d\n", tmp.ID1, tmp.ID2, tmp.start_time, tmp.end_time, tmp.num, tmp.interval); 
-//    }
-//
+/* 
+    for(int i = 0; i < (int)Q_contact_rec_time_based.size(); i++)
+    {
+        EVENT_REC tmp = Q_contact_rec_time_based[i]; 
+        // printf("%d\t%d\t%d\t%d\t%d\t%d\n", tmp.ID1, tmp.ID2, tmp.start_time, tmp.end_time, tmp.num, tmp.interval); 
+        fprintf(fout, "%d\t%d\t%d\t%d\t%d\t%d\n", tmp.ID1, tmp.ID2, tmp.start_time, tmp.end_time, tmp.num, tmp.interval); 
+    }
+*/ 
     fclose(fin); 
+    fclose(fout); 
 
     return 0;
 }

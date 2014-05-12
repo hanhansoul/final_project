@@ -18,8 +18,8 @@ int init()
     Q_node_rec.clear(); 
 
     // 初始化100个iMote节点信息
-    for(int i = 1; i <= MAXN; i++)
-        Q_node_rec.push_back(NODE()); 
+    for(int i = 0; i <= MAXN; i++)
+        Q_node_rec.push_back(NODE(i)); 
 
     return 0; 
 }

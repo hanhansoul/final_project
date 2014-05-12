@@ -21,5 +21,7 @@ node_function.o: node_function.cpp
 connection.o: connection.cpp NODE.h
 	g++ -g -c connection.cpp 
 
+NODE.h: STRUCT.h
+
 clean:
 	rm *o main

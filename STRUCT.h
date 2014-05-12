@@ -58,11 +58,16 @@ struct EVENT_REC                // 记录连接事件
 struct VOTE{                    // 记录获得的投票
     VOTE():time(0)
     {
-        memset(0, sizeof(v), 0); 
+        for(int i = 0; i < VOTE_K; i++) v[i] = 0; 
     }
     VOTE(int t):time(t)
     {
-        memset(0, sizeof(v), 0); 
+        for(int i = 0; i < VOTE_K; i++) v[i] = 0; 
+    }
+    int clear()
+    {
+        for(int i = 0; i < VOTE_K; i++) v[i] = 0; 
+        time = 0; 
     }
     int v[VOTE_K];              // 各类票数
     int time;                   // 该轮投票时间, tot_vote中无用
@@ -89,9 +94,15 @@ struct MSG_REC
 
 struct MSG                              // 一次连接传递的信息
 {
-    MSG()
+    MSG():jump_vote()
     {
-
+        ID1 = 0; 
+        ID2 = 0;  
+        state = 0; 
+        voting = false; 
+        vote_level = 0; 
+        adj_max_state = 0; 
+        is_jump_vote = false; 
     }
 
     MSG(int ID1, int ID2, int state, bool voting, int vote_level, int adj_max_state, VOTE jump_vote, bool is_jump_vote)
@@ -99,7 +110,6 @@ struct MSG                              // 一次连接传递的信息
         this->ID1 = ID1; 
         this->ID2 = ID2;  
         this->state = state; 
-        // this->vote = tot_vote; 
         this->voting = voting; 
         this->vote_level = vote_level; 
         this->adj_max_state = adj_max_state; 
@@ -112,13 +122,10 @@ struct MSG                              // 一次连接传递的信息
     int state;                          // 主动连接节点的状态
 
     bool voting;                        // 是否投票
-    int vote_level;                     // 投票种类
-    VOTE jump_vote;                     // 该节点的二段投票
     bool is_jump_vote;                  // 二段投票
-
+    int vote_level;                     // 投票种类
     int adj_max_state;                  // 相邻最大状态值
-
-    // VOTE vote;                       // 主动连接节点票数
+    VOTE jump_vote;                     // 该节点的二段投票
 }; 
 
 #endif

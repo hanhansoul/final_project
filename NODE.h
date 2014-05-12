@@ -9,12 +9,27 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
     /* 
        节点状态
     */ 
+    NODE()
+    {
+
+    }
+
+    NODE(int ID):state(0), duration(0), adj_max_state(0), adj_max_state_node(0), tot_vote(), jump_vote()
+    {
+        this->ID = ID; 
+        M_contacts_rec.clear(); 
+        Q_max_k_heap.clear(); 
+        tot_vote.clear(); 
+        jump_vote.clear(); 
+        Q_vote_rev = queue < VOTE >(); 
+        M_adj_node.clear(); 
+    }
+
     int ID;                             // 该节点ID
     int state;                          // 支配值.表明该节点为支配节点或被支配节点.
     int duration;                       // 节点启动后持续运作的时间 
     int adj_max_state;                  // 附近节点中的最大state值
     int adj_max_state_node;             // 附近节点中的最大state节点ID
-
 
     /* 
        根据M_contacts_rec中记录的节点间的连接次数, 利用max_k_heap计算出连接次数前k大的节点, 并进行投票.
@@ -35,7 +50,7 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
     // functions
     int vote_expire(int current_time); 
     int be_connected(int from_ID, MSG msg); 
-    int connect(int ID, MSG &msg); 
+    MSG connect(int ID); 
     int update(int current_time); 
     int update_time(int current_time); 
 /* 
