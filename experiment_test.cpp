@@ -32,7 +32,6 @@ int simulation_time_based()
         // 跳出循环, 仿真结束.
         if(i == (int)Q_contact_rec_time_based.size())
             break; 
-
     }
     return 0; 
 }

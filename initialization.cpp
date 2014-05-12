@@ -6,9 +6,9 @@
 
 #include "NODE.h"
 
-vector < REC > Q_contact_rec_node_based[MAXN];      // 根据节点来记录连接
-vector < REC > Q_contact_rec_time_based;            // 根据时间轴来记录连接
-vector < NODE > Q_node_rec;                         // 表示每一个节点
+vector < EVENT_REC > Q_contact_rec_node_based[MAXN];    // 根据节点来记录连接
+vector < EVENT_REC > Q_contact_rec_time_based;          // 根据时间轴来记录连接
+vector < NODE > Q_node_rec;                             // 表示每一个节点
 
 int init()
 {

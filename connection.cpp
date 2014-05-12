@@ -31,7 +31,7 @@ int connection(EVENT_REC record)
     MSG msg; 
     // ID1 --> ID2
     // ID1
-    msg = Q_node_rec[ID1].connect(ID2); 
+    Q_node_rec[ID1].connect(ID2, msg); 
     // ID2 
     Q_node_rec[ID2].be_connected(ID1, msg); 
 

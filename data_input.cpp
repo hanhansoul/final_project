@@ -31,23 +31,10 @@
 // #define INPUT_DATA_FILE "c.dat"
 #include "NODE.h"
 
-extern vector < REC > Q_contact_rec_node_based[MAXN];  // 根据节点来记录连接
-extern vector < REC > Q_contact_rec_time_based;        // 根据时间轴来记录连接
+extern vector < EVENT_REC > Q_contact_rec_node_based[MAXN];  // 根据节点来记录连接
+extern vector < EVENT_REC > Q_contact_rec_time_based;        // 根据时间轴来记录连接
 
-REC assign(int ID1, int ID2, int start_time, int end_time, int num, int interval)
-{
-    // 使用函数比使用构造函数要快一些?
-    REC tmp; 
-    tmp.ID1 = ID1; 
-    tmp.ID2 = ID2; 
-    tmp.start_time = start_time; 
-    tmp.end_time = end_time; 
-    tmp.num = num; 
-    tmp.interval = interval; 
-    return tmp; 
-}
-
-bool time_cmp(const REC& t1, const REC& t2)
+bool time_cmp(const EVENT_REC& t1, const EVENT_REC& t2)
 {
     if(t1.start_time == t2.start_time)
     {
@@ -79,7 +66,7 @@ int data_input()
 
     while(fscanf(fin, "%d%d%d%d%d%d", &ID1, &ID2, &start_time, &end_time, &num, &interval) != EOF)
     {
-        REC tmp = assign(ID1, ID2, start_time, end_time, num, interval); 
+        EVENT_REC tmp(ID1, ID2, start_time, end_time, num, interval); 
         Q_contact_rec_node_based[ID1].push_back(tmp); 
         Q_contact_rec_time_based.push_back(tmp); 
     }

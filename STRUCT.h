@@ -38,6 +38,16 @@ struct EVENT_REC                // 记录连接事件
 
     }
 
+    EVENT_REC(int ID1, int ID2, int start_time, int end_time, int num, int interval)
+    {
+        this->ID1 = ID1; 
+        this->ID2 = ID2; 
+        this->start_time = start_time; 
+        this->end_time = end_time; 
+        this->num = num; 
+        this->interval = interval; 
+    }
+
     int ID1;                    // 主动连接设备ID
     int ID2;                    // 被连接设备ID
     int start_time, end_time;   // 连接开始和结束时间
@@ -65,14 +75,14 @@ struct MSG_REC
 
     }
 
-    MSG_REC(int state, VOTE vote, int adj_max_state)
+    MSG_REC(int state, int adj_max_state)
     {
-        this->vote = vote; 
+        // this->vote = vote; 
         this->state = state; 
         this->adj_max_state = adj_max_state; 
     }
 
-    VOTE vote; 
+    // VOTE vote; 
     int state; 
     int adj_max_state; 
 }; 
@@ -84,29 +94,31 @@ struct MSG                              // 一次连接传递的信息
 
     }
 
-    MSG(int ID1, int ID2, int state, VOTE vote, bool voting, int vote_level, int adj_max_state, VOTE jump_vote)
+    MSG(int ID1, int ID2, int state, bool voting, int vote_level, int adj_max_state, VOTE jump_vote, bool is_jump_vote)
     {
-        this->ID1 = ID; 
-        this->ID2 = to_ID;  
+        this->ID1 = ID1; 
+        this->ID2 = ID2;  
         this->state = state; 
-        this->vote = tot_vote; 
+        // this->vote = tot_vote; 
         this->voting = voting; 
         this->vote_level = vote_level; 
         this->adj_max_state = adj_max_state; 
         this->jump_vote = jump_vote; 
+        this->is_jump_vote = is_jump_vote; 
     }
 
     int ID1; 
     int ID2; 
     int state;                          // 主动连接节点的状态
 
-    VOTE vote;                          // 主动连接节点票数
     bool voting;                        // 是否投票
     int vote_level;                     // 投票种类
-    // bool is_jump_vote;                  // 二段投票
     VOTE jump_vote;                     // 该节点的二段投票
+    bool is_jump_vote;                  // 二段投票
 
     int adj_max_state;                  // 相邻最大状态值
+
+    // VOTE vote;                       // 主动连接节点票数
 }; 
 
 #endif
