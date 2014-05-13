@@ -4,17 +4,38 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+A	A.h	/^struct A$/;"	s
 A	t4.cpp	/^struct A$/;"	s	file:
+A	t8.cpp	/^    A():s(0)$/;"	f	struct:A	access:public	signature:()
+A	t8.cpp	/^struct A$/;"	s	file:
+A::A	t8.cpp	/^    A():s(0)$/;"	f	struct:A	access:public	signature:()
+A::a	A.h	/^    int a; $/;"	m	struct:A	access:public
+A::fun	A.h	/^    int fun()$/;"	f	struct:A	access:public	signature:()
+A::fun	t4.cpp	/^    int fun()$/;"	f	struct:A	access:public	signature:()
+A::fun	t5.cpp	/^int A::fun()$/;"	f	class:A	signature:()
+A::s	t8.cpp	/^    int s; $/;"	m	struct:A	file:	access:public
 A::v	t4.cpp	/^    int v[10]; $/;"	m	struct:A	file:	access:public
+A::v	t8.cpp	/^    int v[4]; $/;"	m	struct:A	file:	access:public
+B	t8.cpp	/^    B(int a):a(), cls()$/;"	f	struct:B	access:public	signature:(int a)
+B	t8.cpp	/^struct B$/;"	s	file:
+B::B	t8.cpp	/^    B(int a):a(), cls()$/;"	f	struct:B	access:public	signature:(int a)
+B::a	t8.cpp	/^    int a; $/;"	m	struct:B	file:	access:public
+B::cls	t8.cpp	/^    A cls; $/;"	m	struct:B	file:	access:public
+DEBUG	A.h	21;"	d
 DEBUG	a.cpp	21;"	d	file:
 DEBUG	b.cpp	21;"	d	file:
 DEBUG	map.cpp	21;"	d	file:
 DEBUG	t1.cpp	21;"	d	file:
 DEBUG	t2.cpp	21;"	d	file:
 DEBUG	t4.cpp	21;"	d	file:
+DEBUG	t5.cpp	21;"	d	file:
+DEBUG	t6.cpp	21;"	d	file:
+DEBUG	t7.cpp	21;"	d	file:
+DEBUG	t8.cpp	21;"	d	file:
 M	t1.cpp	/^map < int, int > M; $/;"	v
 MP	map.cpp	23;"	d	file:
 MP	t1.cpp	43;"	d	file:
+MP	t7.cpp	28;"	d	file:
 NODE	q.h	/^struct NODE$/;"	s
 NODE	t1.cpp	/^    NODE():a(0), b(0)$/;"	f	struct:NODE	access:public	signature:()
 NODE	t1.cpp	/^    NODE(int x, int y):a(x), b(y)$/;"	f	struct:NODE	access:public	signature:(int x, int y)
@@ -29,18 +50,41 @@ NODE::b	t1.cpp	/^    int b; $/;"	m	struct:NODE	file:	access:public
 NODE::init	q.h	/^    int init(int a, int b){$/;"	f	struct:NODE	access:public	signature:(int a, int b)
 NODE::v	t3.cpp	/^    int v[4]; $/;"	m	struct:NODE	file:	access:public
 Q	t1.cpp	/^vector < NODE > Q; $/;"	v
+_TEST_H_	header_test/test.h	2;"	d
+a	A.h	/^    int a; $/;"	m	struct:A	access:public
 a	q.h	/^    int a; $/;"	m	struct:NODE	access:public
 a	t1.cpp	/^    int a; $/;"	m	struct:NODE	file:	access:public
+a	t8.cpp	/^    int a; $/;"	m	struct:B	file:	access:public
+add1	header_test/test.h	/^char add1[] = "www.shellbox.cn\\n";$/;"	v
+add2	header_test/test.h	/^char add2[] = "www.scriptbox.cn\\n";$/;"	v
 b	q.h	/^    int b; $/;"	m	struct:NODE	access:public
 b	t1.cpp	/^    int b; $/;"	m	struct:NODE	file:	access:public
+cls	t8.cpp	/^    A cls; $/;"	m	struct:B	file:	access:public
+ext	t4.cpp	/^int ext; $/;"	v
+fun	A.h	/^    int fun()$/;"	f	struct:A	access:public	signature:()
+fun	t4.cpp	/^    int fun()$/;"	f	struct:A	access:public	signature:()
+fun	t5.cpp	/^int A::fun()$/;"	f	class:A	signature:()
+i	header_test/test.h	/^int i = 10;$/;"	v
 init	q.h	/^    int init(int a, int b){$/;"	f	struct:NODE	access:public	signature:(int a, int b)
 input	a.cpp	/^void input()$/;"	f	signature:()
 input	b.cpp	/^void input(); $/;"	p	file:	signature:()
 main	b.cpp	/^int main()$/;"	f	signature:()
+main	header_test/test.c	/^int main()$/;"	f
 main	map.cpp	/^int main()$/;"	f	signature:()
 main	t1.cpp	/^int main()$/;"	f	signature:()
 main	t2.cpp	/^int main()$/;"	f	signature:()
 main	t3.cpp	/^int main ()$/;"	f	signature:()
 main	t4.cpp	/^int main()$/;"	f	signature:()
+main	t5.cpp	/^int main()$/;"	f	signature:()
+main	t6.cpp	/^int main()$/;"	f	signature:()
+main	t7.cpp	/^int main()$/;"	f	signature:()
+s	t8.cpp	/^    int s; $/;"	m	struct:A	file:	access:public
+test1	header_test/test.c	/^extern void test1();$/;"	p	file:
+test1	header_test/test.h	/^void test1();$/;"	p	signature:()
+test1	header_test/test1.c	/^void test1()$/;"	f
+test2	header_test/test.c	/^extern void test2();$/;"	p	file:
+test2	header_test/test.h	/^void test2();$/;"	p	signature:()
+test2	header_test/test2.c	/^void test2()$/;"	f
 v	t3.cpp	/^    int v[4]; $/;"	m	struct:NODE	file:	access:public
 v	t4.cpp	/^    int v[10]; $/;"	m	struct:A	file:	access:public
+v	t8.cpp	/^    int v[4]; $/;"	m	struct:A	file:	access:public

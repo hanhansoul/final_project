@@ -55,79 +55,67 @@ struct EVENT_REC                // 记录连接事件
     int interval;               // 连接时间间隔
 }; 
 
-struct VOTE{                    // 记录获得的投票
-    VOTE():time(0)
+struct VOTE                     // 投票
+{                                       
+    VOTE():from_ID(0), to_ID(0), vote(0)
     {
-        for(int i = 0; i < VOTE_K; i++) v[i] = 0; 
+
     }
-    VOTE(int t):time(t)
+
+    VOTE(int from_ID, int to_ID, int vote)
     {
-        for(int i = 0; i < VOTE_K; i++) v[i] = 0; 
+        this->from_ID = from_ID; 
+        this->to_ID = to_ID; 
+        this->vote = vote; 
     }
-    int clear()
-    {
-        for(int i = 0; i < VOTE_K; i++) v[i] = 0; 
-        time = 0; 
-    }
-    int v[VOTE_K];              // 各类票数
-    int time;                   // 该轮投票时间, tot_vote中无用
+
+    int vote;                   // 各类票数
+    int from_ID;                // 投票节点ID
+    int to_ID;                  // 被投票节点ID
 }; 
 
-struct MSG_REC
+struct MSG_REC                          // 记录相邻节点信息
 {
     MSG_REC()
     {
 
     }
 
-    MSG_REC(int state, int adj_max_state, int adj_max_node)
+    MSG_REC(int state, int adj_max_state, int adj_max_node, int contacts)
     {
-        // this->vote = vote; 
         this->state = state; 
         this->adj_max_state = adj_max_state; 
         this->adj_max_node = adj_max_node; 
+        this->contacts = contacts; 
     }
 
-    // VOTE vote; 
-    int state; 
-    int adj_max_state; 
-    int adj_max_node; 
+    int state;                          // 相邻节点B的state 
+    int adj_max_state;                  // 相邻节点B记录的相邻最大state节点C的state
+    int adj_max_node;                   // 相邻节点B记录的相邻最大state节点C的ID
+    int contacts;                       // 与C的连接次数
 }; 
 
 struct MSG                              // 一次连接传递的信息
 {
-    MSG():jump_vote()
+    MSG():ID1(0), ID2(0), msg_rec(), direct_vote(), indirect_vote()
     {
-        ID1 = 0; 
-        ID2 = 0;  
-        state = 0; 
-        voting = false; 
-        vote_level = 0; 
-        adj_max_state = 0; 
-        is_jump_vote = false; 
+
     }
 
-    MSG(int ID1, int ID2, int state, bool voting, int vote_level, int adj_max_state, VOTE jump_vote, bool is_jump_vote)
+    MSG(int ID1, int ID2, MSG_REC msg_rec, VOTE direct_vote, VOTE indirect_vote)
     {
         this->ID1 = ID1; 
         this->ID2 = ID2;  
-        this->state = state; 
-        this->voting = voting; 
-        this->vote_level = vote_level; 
-        this->adj_max_state = adj_max_state; 
-        this->jump_vote = jump_vote; 
-        this->is_jump_vote = is_jump_vote; 
+        this->msg_rec= msg_rec; 
+        this->direct_vote = direct_vote; 
+        this->indirect_vote = indirect_vote; 
     }
 
     int ID1; 
     int ID2; 
-    int state;                          // 主动连接节点的状态
-
-    bool voting;                        // 是否投票
-    bool is_jump_vote;                  // 二段投票
-    int vote_level;                     // 投票种类
-    int adj_max_state;                  // 相邻最大状态值
-    VOTE jump_vote;                     // 该节点的二段投票
+    MSG_REC msg_rec;                    // 节点B需要记录的信息
+    VOTE direct_vote;                   // 该节点的直接投票
+    VOTE indirect_vote;                 // 该节点的间接投票
 }; 
 
 #endif

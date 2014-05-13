@@ -6,152 +6,160 @@
 
 #include "NODE.h"
 
-int NODE::vote_expire(int current_time)                 // 淘汰超过时间间隔的投票
-{
-    while(!Q_vote_rev.empty() && current_time - Q_vote_rev.front().time >= RESERVE_TIME)
-    {
-        for(int i = 0; i < VOTE_K; i++)
-            tot_vote.v[i] -= Q_vote_rev.front().v[i]; 
-        Q_vote_rev.pop(); 
-    }
-    Q_vote_rev.push(VOTE(current_time)); 
-    return 0; 
-}
-
-int NODE::be_connected(int from_ID, MSG msg)             // 被投票
-{
-    // 二段投票
-    Q_vote_rev.back().v[0] += msg.jump_vote.v[0]; 
-    // mark
-    state += msg.jump_vote.v[0]; 
-
-    if(msg.is_jump_vote)
-    {
-    }
-
-    if(msg.voting)
-    {
-        if(msg.vote_level == 0)
-        {
-            if(state < adj_max_state)
-            {
-                jump_vote.v[msg.vote_level]++; 
-            }else
-            {
-                Q_vote_rev.back().v[msg.vote_level]++; 
-                tot_vote.v[msg.vote_level]++; 
-                // mark
-                state++; 
-            }
-        }else
-        {
-            Q_vote_rev.back().v[msg.vote_level]++; 
-            tot_vote.v[msg.vote_level]++; 
-        }
-    }
-
-    // 更新M_adj_node
-    M_adj_node[msg.ID1] = MSG_REC(msg.state, msg.adj_max_state, msg.adj_max_node); 
-    if(adj_max_state < state)
-    {
-        adj_max_state = state; 
-        adj_max_node = 0; 
-    }
-    if(msg.state > adj_max_state)
-    {
-        adj_max_state = msg.state; 
-        adj_max_node = msg.ID1; 
-    }
-    
-    return 0; 
-}
-
 MSG NODE::connect(int to_ID)                    // 向其他节点发出连接, 根据节点ID连接, ID即为被连接节点ID
 {
     // 更新 M_contacts_rec, 从Q_max_k_heap中选出最大的k组.
-    int k = ++M_contacts_rec[to_ID];            // 增加一次连接计数
-    bool voting = false;                        // 是否向该节点投票
-    int vote_level = 0;                         // 选票类型
+    vector < pair < int, int > >::iterator posB, posC;  // Q_max_k_heap;
+    int index, indirect_vote_ID; 
+    int value, voteB, voteC; 
+    int a, b, c; 
+    voteB = voteC = 0; 
+    indirect_vote_ID = 0; 
+    a = ++M_contacts_rec[to_ID]; 
 
-    // 更新Q_max_k_heap, 并选出前k多连接次数的节点
-    int i = 0; 
+    Q_heap_insert(MP(to_ID, a)); 
+    posB = in_Q_heap(to_ID); 
+    if(posB != Q_max_k_heap.end())
+    {
+        if(M_adj_node.count(to_ID))
+        {
+            MSG_REC t_rec = M_adj_node[to_ID];              // B
+            indirect_vote_ID = t_rec.adj_max_node; 
+            b = t_rec.contacts; 
+            if(state < t_rec.state)                         // A.s < B.s > A.s
+            {
+                if(t_rec.adj_max_node == to_ID)             // B == C
+                {
+                    index = posB - Q_max_k_heap.begin(); 
+                    voteB += Q_vote[index]; 
+                }else                                       // C.s > B.s
+                {
+                    posC = in_Q_heap(t_rec.adj_max_node); 
+                    if(posC != Q_max_k_heap.end())          // C in A.Q
+                    {
+                        c = ++M_contacts_rec[t_rec.adj_max_node]; 
+                        Q_heap_insert(MP(t_rec.adj_max_node, c)); 
+
+                        posB = in_Q_heap(to_ID); 
+                        if(posB != Q_max_k_heap.end())
+                            index = posB - Q_max_k_heap.begin(); 
+                        else
+                            index = VOTE_K - 1; 
+
+                        value = Q_vote[index]; 
+                        if(a > b) voteB += floor(1.0 * value * a / (a + c) * (a - b) / a); 
+                        voteC += value - voteB; 
+                    }else                                   // C not in A.Q
+                    {
+                        index = posB - Q_max_k_heap.begin(); 
+                        value = Q_vote[index]; 
+                        if(a > b) voteB += floor(1.0 * value * (a - b) / a); 
+                        voteC += value - voteB; 
+                    }
+                }
+            }else                                           // B.s < A.s
+            {
+                if(state >= t_rec.adj_max_state || t_rec.adj_max_node == ID)                // A == C
+                {
+                    index = posB - Q_max_k_heap.begin(); 
+                    value = Q_vote[index]; 
+                    state += value; 
+                }else
+                {
+                    posC = in_Q_heap(t_rec.adj_max_node); 
+                    if(posC != Q_max_k_heap.end())          // C in A.Q
+                    {
+                        c = ++M_contacts_rec[t_rec.adj_max_node]; 
+                        Q_heap_insert(MP(t_rec.adj_max_node, c)); 
+                        posB = in_Q_heap(to_ID); 
+                        if(posB != Q_max_k_heap.end())
+                            index = posB - Q_max_k_heap.begin(); 
+                        else
+                            index = VOTE_K - 1; 
+                        value = Q_vote[index]; 
+                        voteC += value; 
+                    }else                                   // C not in A.Q
+                    {
+                        // 
+                    }
+                }
+            }
+        }else                                               // A.s ? B.s
+        {
+            index = posB - Q_max_k_heap.begin(); 
+            value = Q_vote[index]; 
+            voteB += value; 
+        }
+    }
+
+    if(M_indirect_vote.count(to_ID))
+    {
+        voteB += M_indirect_vote[to_ID]; 
+        M_indirect_vote[to_ID] = 0; 
+    }
+
+    VOTE direct_vote(ID, to_ID, voteB); 
+    VOTE indirect_vote(to_ID, indirect_vote_ID, voteC); 
+    MSG_REC msg_rec(state, adj_max_state, adj_max_node, contacts); 
+    return MSG(ID, to_ID, msg_rec, direct_vote, indirect_vote); 
+}
+
+vector < pair < int, int > >::iterator NODE::in_Q_heap(int ID)
+{
     vector < pair < int, int > >::iterator pos; 
     for(pos = Q_max_k_heap.begin(); pos != Q_max_k_heap.end(); pos++)
-        if(pos->first == to_ID)
-        {
-            Q_max_k_heap.erase(pos); 
+        if(ID == pos->first)
             break; 
-        }
-    for(pos = Q_max_k_heap.begin(); pos != Q_max_k_heap.end(); pos++, i++)
-        if(k >= pos->second) 
+    return pos; 
+}
+
+int NODE::Q_heap_insert(pair < int, int > node)
+{
+    vector < pair < int, int > >::iterator pos; 
+    pos = in_Q_heap(node.first); 
+    if(pos != Q_max_k_heap.end())
+        Q_max_k_heap.erase(pos); 
+
+    for(pos = Q_max_k_heap.begin(); pos != Q_max_k_heap.end(); pos++)
+        if(node.second >= pos->second) 
         {
-            Q_max_k_heap.insert(pos, MP(to_ID, k));
-            voting = true; 
-            vote_level = i; 
+            Q_max_k_heap.insert(pos, node);
             break; 
         }
 
     if(Q_max_k_heap.size() > VOTE_K)
         Q_max_k_heap.pop_back(); 
+    return 0; 
+}
 
-    if(!voting && i < VOTE_K)
-    {
-        Q_max_k_heap.push_back(MP(to_ID, k)); 
-        voting = true; 
-        vote_level = i; 
-    }
+int NODE::be_connected(MSG msg)             // 被投票
+{
+    state += msg.direct_vote.vote; 
+
+    MSG_REC t_rec = msg.msg_rec; 
+    M_adj_node[msg.ID1] = t_rec; 
+
+    if(M_indirect_vote.count(msg.indirect_vote.to_ID))
+        M_indirect_vote[msg.indirect_vote.to_ID] += msg.indirect_vote.vote; 
+    else
+        M_indirect_vote.insert(MP(msg.indirect_vote.to_ID, msg.indirect_vote.vote)); 
     
-    // 二段投票
-    // jump_vote
-<<<<<<< HEAD
-    VOTE t_jump_vote(); 
-    bool is_jump_vote = false; 
-    // if(voting && vote_level == 0 && M_adj_node.count(to_ID))
-    if(M_adj_node.count(to_ID))
+    if(adj_max_state < t_rec.state)
     {
-        MSG_REC t_rec = M_adj_node[to_ID]; 
-        if(voting && vote_level == 0 && state > t_rec.state)    // 如果A的state比B的state大, 则A不向B投0类票.
-            voting = false; 
-
-        if(t_rec.adj_max_node)                                  // 如果B附近的state最大节点C在A的投票队列中, 则A向C投二段票.
-        {
-            for(int i = 0; i < (int)Q_max_k_heap.size(); i++)
-                if(t_rec.adj_max_node == Q_max_k_heap[i].first)
-                {
-
-                }
-        }
-    }else 
-    {
-
+        adj_max_state = t_rec.state; 
+        adj_max_node = msg.ID1; 
+        if(M_contacts_rec.count(msg.ID1))
+            contacts = M_contacts_rec[msg.ID1]; 
     }
 
-    if(adj_max_node == to_ID)
-=======
-    if(voting && vote_level == 0 && M_adj_node.count(to_ID))
->>>>>>> branch_3
-    {
-        t_jump_vote = jump_vote; 
-        is_jump_vote = true; 
-    }
-    return MSG(ID, to_ID, state, voting, vote_level, adj_max_state, t_jump_vote, is_jump_vote); 
-
+    return 0; 
 }
 
-<<<<<<< HEAD
-=======
-    if(adj_max_state_node == to_ID)
-        return MSG(ID, to_ID, state, voting, vote_level, adj_max_state, jump_vote, true); 
-    else 
-        return MSG(ID, to_ID, state, voting, vote_level, adj_max_state, VOTE(), false); 
-}
-
->>>>>>> branch_3
 int NODE::update(int current_time)
 {
     // update投票, 淘汰超过保留时间的投票.
     update_time(current_time); 
-    vote_expire(current_time); 
+    // vote_expire(current_time); 
 /* 
     // state增加
     
