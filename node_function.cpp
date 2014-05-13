@@ -103,6 +103,7 @@ MSG NODE::connect(int to_ID)                    // 向其他节点发出连接, 
     
     // 二段投票
     // jump_vote
+<<<<<<< HEAD
     VOTE t_jump_vote(); 
     bool is_jump_vote = false; 
     // if(voting && vote_level == 0 && M_adj_node.count(to_ID))
@@ -126,6 +127,9 @@ MSG NODE::connect(int to_ID)                    // 向其他节点发出连接, 
     }
 
     if(adj_max_node == to_ID)
+=======
+    if(voting && vote_level == 0 && M_adj_node.count(to_ID))
+>>>>>>> branch_3
     {
         t_jump_vote = jump_vote; 
         is_jump_vote = true; 
@@ -134,6 +138,15 @@ MSG NODE::connect(int to_ID)                    // 向其他节点发出连接, 
 
 }
 
+<<<<<<< HEAD
+=======
+    if(adj_max_state_node == to_ID)
+        return MSG(ID, to_ID, state, voting, vote_level, adj_max_state, jump_vote, true); 
+    else 
+        return MSG(ID, to_ID, state, voting, vote_level, adj_max_state, VOTE(), false); 
+}
+
+>>>>>>> branch_3
 int NODE::update(int current_time)
 {
     // update投票, 淘汰超过保留时间的投票.

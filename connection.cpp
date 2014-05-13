@@ -20,7 +20,7 @@ int connection(EVENT_REC record)
         
     if(ID1 > 100 || ID2 > 100) 
     {
-        printf("external device.\n"); 
+        // printf("external device.\n"); 
         return -1; 
     }
 
@@ -31,7 +31,7 @@ int connection(EVENT_REC record)
     MSG msg; 
     // ID1 --> ID2
     // ID1
-    Q_node_rec[ID1].connect(ID2, msg); 
+    msg = Q_node_rec[ID1].connect(ID2); 
     // ID2 
     Q_node_rec[ID2].be_connected(ID1, msg); 
 
