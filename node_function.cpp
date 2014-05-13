@@ -132,7 +132,7 @@ int NODE::Q_heap_insert(pair < int, int > node)
     return 0; 
 }
 
-int NODE::be_connected(MSG msg)             // 被投票
+int NODE::be_connected(MSG msg)                 // 被投票
 {
     state += msg.direct_vote.vote; 
 
