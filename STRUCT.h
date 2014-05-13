@@ -75,16 +75,18 @@ struct MSG_REC
 
     }
 
-    MSG_REC(int state, int adj_max_state)
+    MSG_REC(int state, int adj_max_state, int adj_max_node)
     {
         // this->vote = vote; 
         this->state = state; 
         this->adj_max_state = adj_max_state; 
+        this->adj_max_node = adj_max_node; 
     }
 
     // VOTE vote; 
     int state; 
     int adj_max_state; 
+    int adj_max_node; 
 }; 
 
 struct MSG                              // 一次连接传递的信息
