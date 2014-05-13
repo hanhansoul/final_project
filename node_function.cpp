@@ -18,46 +18,6 @@ int NODE::vote_expire(int current_time)                 // 淘汰超过时间间
     return 0; 
 }
 
-int NODE::update(int current_time)
-{
-    // update投票, 淘汰超过保留时间的投票.
-    update_time(current_time); 
-    vote_expire(current_time); 
-/* 
-    // state增加
-    
-    // 根据投票更新节点状态
-    // I.
-    // Q_max_k_heap M_adj_node
-    for(int i = 0; i < VOTE_K; i++)
-    {
-        int tID = Q_max_k_heap[i].first; 
-        if(M_adj_node.count(tID))
-        {
-            if(is_dominator(M_adj_node[tID]))
-            {
-                // 节点投票的节点为DOR, DEE增大.
-            }else
-            {
-                // 节点投票的节点为DEE, DOR增大.
-            }
-        }else 
-        {
-            // 节点的投票的节点信息缺失
-        }
-    }
-
-    // II.
-    // tot_vote
-    for(int i = 0; i < VOTE_K; i++)
-    {
-
-    }
-    last_tot_vote = tot_vote; 
-*/ 
-    return 0; 
-}
-
 int NODE::be_connected(int from_ID, MSG msg)             // 被投票
 {
     if(msg.is_jump_vote)
@@ -153,6 +113,46 @@ MSG NODE::connect(int to_ID)                    // 向其他节点发出连接, 
         return MSG(ID, to_ID, state, voting, vote_level, adj_max_state, jump_vote, true); 
     else 
         return MSG(ID, to_ID, state, voting, vote_level, adj_max_state, VOTE(), false); 
+}
+
+int NODE::update(int current_time)
+{
+    // update投票, 淘汰超过保留时间的投票.
+    update_time(current_time); 
+    vote_expire(current_time); 
+/* 
+    // state增加
+    
+    // 根据投票更新节点状态
+    // I.
+    // Q_max_k_heap M_adj_node
+    for(int i = 0; i < VOTE_K; i++)
+    {
+        int tID = Q_max_k_heap[i].first; 
+        if(M_adj_node.count(tID))
+        {
+            if(is_dominator(M_adj_node[tID]))
+            {
+                // 节点投票的节点为DOR, DEE增大.
+            }else
+            {
+                // 节点投票的节点为DEE, DOR增大.
+            }
+        }else 
+        {
+            // 节点的投票的节点信息缺失
+        }
+    }
+
+    // II.
+    // tot_vote
+    for(int i = 0; i < VOTE_K; i++)
+    {
+
+    }
+    last_tot_vote = tot_vote; 
+*/ 
+    return 0; 
 }
 
 int NODE::update_time(int current_time)
