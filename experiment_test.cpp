@@ -9,6 +9,11 @@ extern vector < EVENT_REC > Q_contact_rec_time_based;       // 表示每一次�
 extern vector < NODE > Q_node_rec;                          // 表示每一个节点
 int connection(EVENT_REC record); 
 
+bool cmp(const NODE &t1, const NODE &t2)
+{
+    return t1.state < t2.state; 
+}
+
 int simulation_time_based()
 {
     int current_time = 0; 
@@ -39,8 +44,9 @@ int simulation_time_based()
             break; 
     }
 
+    sort(Q_node_rec.begin() + 1, Q_node_rec.end(), cmp); 
     for(int i = 1; i <= MAXN; i++)
-        printf("%d\t%d\n", i, Q_node_rec[i].state); 
+        printf("%d\t%d\n", Q_node_rec[i].ID, Q_node_rec[i].state); 
     return 0; 
 }
 
