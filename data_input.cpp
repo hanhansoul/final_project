@@ -1,17 +1,17 @@
 /*
  * 从contact.dat中读入数据.
  * contact.dat记录了实验过程中, 任意一对节点间的接触.
- * 
- * ======================== 
+ *
+ * ========================
  * Examples taken from contact.Exp1.dat (two first columns and first rows)
- * ======================== 
+ * ========================
  * 1       8       121     121     1       0
  * 1       3       236     347     1       0
  * 1       4       236     347     1       0
  * 1       5       121     464     1       0
  * 1       8       585     585     2       464
- * ======================== 
- * ======================== 
+ * ========================
+ * ========================
  *
  * - 第一列记录主动连接的设备ID.
  * - 第二列记录被连接的设备ID.
@@ -36,56 +36,59 @@ extern vector < EVENT_REC > Q_contact_rec_time_based;        // 根据时间轴�
 
 bool time_cmp(const EVENT_REC& t1, const EVENT_REC& t2)
 {
-    if(t1.start_time == t2.start_time)
-    {
-        return t1.ID1 < t2.ID2; 
-    }else
-    {
-        return t1.start_time < t2.start_time; 
-    }
+	if(t1.start_time == t2.start_time)
+	{
+		return t1.ID1 < t2.ID2;
+	}
+	else
+	{
+		return t1.start_time < t2.start_time;
+	}
 }
 
 int data_input()
 {
-    // 打开文件
-    char * input_data_file = 0;
-    if( ! input_data_file)
-        input_data_file = (char *)INPUT_DATA_FILE; 
-    FILE * fin = fopen(input_data_file, "r"); 
-//    FILE * fout = fopen("output", "w"); 
-    if(!fin) 
-    {
-        printf("file open failed.\n"); 
-        return -1; 
-    }else{
-        printf("file open success.\n"); 
-    }
+	// 打开文件
+	char * input_data_file = 0;
+	if( ! input_data_file)
+		input_data_file = (char *)INPUT_DATA_FILE;
+	FILE * fin = fopen(input_data_file, "r");
+//     FILE * fout = fopen("output", "w");
+	if(!fin)
+	{
+		printf("file open failed.\n");
+		return -1;
+	}
+	else
+	{
+		printf("file open success.\n");
+	}
 
-    int ID1;                    // 主动连接设备ID
-    int ID2;                    // 被连接设备ID
-    int start_time, end_time;   // 连接开始和结束时间
-    int num;                    // 连接编号
-    int interval;               // 连接时间间隔
+	int ID1;                    // 主动连接设备ID
+	int ID2;                    // 被连接设备ID
+	int start_time, end_time;   // 连接开始和结束时间
+	int num;                    // 连接编号
+	int interval;               // 连接时间间隔
 
-    while(fscanf(fin, "%d%d%d%d%d%d", &ID1, &ID2, &start_time, &end_time, &num, &interval) != EOF)
-    {
-        EVENT_REC tmp(ID1, ID2, start_time, end_time, num, interval); 
-        Q_contact_rec_node_based[ID1].push_back(tmp); 
-        Q_contact_rec_time_based.push_back(tmp); 
-    }
-    // 根据时间轴对Q_contact_rec_time_based进行排序
-    sort(Q_contact_rec_time_based.begin(), Q_contact_rec_time_based.end(), time_cmp); 
+	while(fscanf(fin, "%d%d%d%d%d%d", &ID1, &ID2, &start_time, &end_time, &num, &interval) != EOF)
+	{
+		EVENT_REC tmp(ID1, ID2, start_time, end_time, num, interval);
+		Q_contact_rec_node_based[ID1].push_back(tmp);
+		Q_contact_rec_time_based.push_back(tmp);
+	}
+	// 根据时间轴对Q_contact_rec_time_based进行排序
+	sort(Q_contact_rec_time_based.begin(), Q_contact_rec_time_based.end(), time_cmp);
 
 //    for(int i = 0; i < (int)Q_contact_rec_time_based.size(); i++)
 //    {
-//        EVENT_REC tmp = Q_contact_rec_time_based[i]; 
-//        // printf("%d\t%d\t%d\t%d\t%d\t%d\n", tmp.ID1, tmp.ID2, tmp.start_time, tmp.end_time, tmp.num, tmp.interval); 
-//        fprintf(fout, "%d\t%d\t%d\t%d\t%d\t%d\n", tmp.ID1, tmp.ID2, tmp.start_time, tmp.end_time, tmp.num, tmp.interval); 
+//        EVENT_REC tmp = Q_contact_rec_time_based[i];
+//        // printf("%d\t%d\t%d\t%d\t%d\t%d\n", tmp.ID1, tmp.ID2, tmp.start_time, tmp.end_time, tmp.num, tmp.interval);
+//        fprintf(fout, "%d\t%d\t%d\t%d\t%d\t%d\n", tmp.ID1, tmp.ID2, tmp.start_time, tmp.end_time, tmp.num, tmp.interval);
 //    }
 
-    fclose(fin); 
-//    fclose(fout); 
+	fclose(fin);
+//    fclose(fout);
 
-    return 0;
+	return 0;
 }
 
