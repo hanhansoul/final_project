@@ -5,6 +5,15 @@
  * */
 
 #include "NODE.h"
+#include <fstream>
+
+extern ofstream fout;
+
+bool NODE::random_dor(double prob)
+{
+    double t = 1.0 * rand() / RAND_MAX;
+    return t - prob <= 0.00001;
+}
 
 MSG NODE::connect(int to_ID)                    // 向其他节点发出连接, 根据节点ID连接, ID即为被连接节点ID
 {
@@ -130,7 +139,7 @@ MSG NODE::connect(int to_ID)                    // 向其他节点发出连接, 
 
     VOTE direct_vote(ID, to_ID, voteB);
     VOTE indirect_vote(to_ID, indirect_vote_ID, voteC);
-    MSG_REC msg_rec(state, adj_max_state, adj_max_node, contacts);
+    MSG_REC msg_rec(state, adj_max_state, adj_max_node, contacts, is_dominator);
     return MSG(ID, to_ID, msg_rec, direct_vote, indirect_vote);
 }
 
@@ -223,34 +232,86 @@ int NODE::update(int current_time)
 {
     // update投票, 淘汰超过保留时间的投票.
     update_time(current_time);
+    // 确定is_dorminator的状态
+    is_dominator = random_dor(dor_prob);
+    map < int, MSG_REC >::iterator iter;
+    int sum_adj_dor, sum_adj_dee;
+    double avg_adj_dor, avg_adj_dee;
+    sum_adj_dor = sum_adj_dee = 0;
+    avg_adj_dor = avg_adj_dee = 0;
 
-    if (state == 0 && adj_tot_state == 0)
+    for (iter = M_adj_node.begin(); iter != M_adj_node.end(); ++iter)
     {
+        if (iter->second.is_dominator)
+        {
+            avg_adj_dor += iter->second.state;
+            sum_adj_dor++;
+        }
+        else
+        {
+            avg_adj_dee += iter->second.state;
+            sum_adj_dee++;
+        }
     }
 
-    double p;
-    double avg = 1.0 * (adj_tot_state + state) / (M_adj_node.size() + 1);
-    // double avg = 1.0 * adj_tot_state / M_adj_node.size();
-    // p = 1.0 * state / tot;
-    // p = 1.0 * state / (state + adj_tot_state);
-    p = 1.0 * state / adj_max_state;
-
-    if (ID == 13)
+    if (sum_adj_dor > 0)
     {
-        cout << p << " ";
+        avg_adj_dor /= sum_adj_dor;
     }
 
-    if (state >= avg)
+    if (sum_adj_dee > 0)
+    {
+        avg_adj_dee /= sum_adj_dee;
+    }
+
+    if (state >= adj_tot_state)
+    {
+        adj_max_state = state;
+        adj_max_node = ID;
+    }
+
+    double p, q;
+    p = adj_max_state == 0 ? 1.0 : 1.0 * state / adj_max_state;
+
+    if (state == 0)
+    {
+        q = 1.0;
+    }
+    else if (avg_adj_dor == 0)
+    {
+        q = 2.0;
+    }
+    else
+    {
+        q = (state + avg_adj_dee) / avg_adj_dor;
+    }
+
+    q = min(2.0, q);
+    bool flag;
+
+    if (random_dor(q * 0.5))
     {
         // 奖励
         dor_prob = dor_prob + p * (1 - dor_prob);
+        flag = true;
     }
     else
     {
         // 惩罚
         dor_prob = p * dor_prob;
+        flag = false;
     }
 
+#if DEBUG
+
+    if (ID == 71)
+    {
+        fout << q << " " << p << " ";
+        fout << flag << endl;
+        // fout << state << " " << avg_adj_dee << " " << avg_adj_dor << " " << q << endl;
+    }
+
+#endif
     // vote_expire(current_time);
     /*
         // state增加

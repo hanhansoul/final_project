@@ -20,6 +20,7 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
         M_contacts_rec.clear();
         M_indirect_vote.clear();
         dor_prob = 0.5;
+        is_dominator = random_dor(dor_prob);
         // Q_vote_rev = queue < VOTE >();
     }
 
@@ -29,6 +30,7 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
     int adj_max_state;                  // 附近节点中的最大state值
     int adj_max_node;                   // 附近节点中的最大state节点ID
     int contacts;
+    bool is_dominator;                  // 根据dor_prob随机决定是否为dor
 
     int adj_tot_state;                  // 附近节点的state之和, 通过M_adj_node更新
     double dor_prob;                    // DOR的概率
@@ -46,9 +48,10 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
     MSG connect(int ID);
     int update_time(int current_time);
     int update(int current_time);
-
     vector < pair < int, int > >::iterator in_Q_heap(int ID);
     int Q_heap_insert(pair < int, int > node);
+
+    bool random_dor(double prob);
     // int vote_expire(int current_time);
 };
 

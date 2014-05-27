@@ -21,6 +21,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <cstring>
+#define DEBUG 0
 
 using namespace std;
 
@@ -78,18 +79,20 @@ struct MSG_REC                          // 记录相邻节点信息
     {
     }
 
-    MSG_REC(int state, int adj_max_state, int adj_max_node, int contacts)
+    MSG_REC(int state, int adj_max_state, int adj_max_node, int contacts, bool is_dominator)
     {
         this->state = state;
         this->adj_max_state = adj_max_state;
         this->adj_max_node = adj_max_node;
         this->contacts = contacts;
+        this->is_dominator = is_dominator;
     }
 
     int state;                          // 相邻节点B的state
     int adj_max_state;                  // 相邻节点B记录的相邻最大state节点C的state
     int adj_max_node;                   // 相邻节点B记录的相邻最大state节点C的ID
     int contacts;                       // 与C的连接次数
+    bool is_dominator;                   // 是否为DOR
 };
 
 struct MSG                              // 一次连接传递的信息
