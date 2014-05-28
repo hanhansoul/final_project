@@ -264,7 +264,7 @@ int NODE::update(int current_time)
         avg_adj_dee /= sum_adj_dee;
     }
 
-    if (state >= adj_tot_state)
+    if (state >= adj_max_state)
     {
         adj_max_state = state;
         adj_max_node = ID;

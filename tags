@@ -21,6 +21,8 @@ B	tmp/t8.cpp	/^struct B$/;"	s	file:
 B::B	tmp/t8.cpp	/^    B():a(1)$/;"	f	struct:B	access:public	signature:()
 B::a	tmp/t8.cpp	/^    int a; $/;"	m	struct:B	file:	access:public
 B::cls	tmp/t8.cpp	/^    A cls; $/;"	m	struct:B	file:	access:public
+CHECK_POINT_TIME	STRUCT.h	34;"	d
+DEBUG	STRUCT.h	24;"	d
 DEBUG	table_record/table_record.cpp	21;"	d	file:
 DEBUG	tmp/A.h	21;"	d
 DEBUG	tmp/a.cpp	21;"	d	file:
@@ -33,6 +35,8 @@ DEBUG	tmp/t5.cpp	21;"	d	file:
 DEBUG	tmp/t6.cpp	21;"	d	file:
 DEBUG	tmp/t7.cpp	21;"	d	file:
 DEBUG	tmp/t8.cpp	21;"	d	file:
+DEBUG	tmp/t9.cpp	21;"	d	file:
+DOR_THRESHOLD	STRUCT.h	35;"	d
 EVENT_REC	STRUCT.h	/^    EVENT_REC(): ID1(0), ID2(0), start_time(0), end_time(0), num(0), interval(0)$/;"	f	struct:EVENT_REC	access:public	signature:()
 EVENT_REC	STRUCT.h	/^    EVENT_REC(int ID1, int ID2, int start_time, int end_time, int num, int interval)$/;"	f	struct:EVENT_REC	access:public	signature:(int ID1, int ID2, int start_time, int end_time, int num, int interval)
 EVENT_REC	STRUCT.h	/^struct EVENT_REC                \/\/ 记录连接事件$/;"	s
@@ -51,11 +55,11 @@ ID1	STRUCT.h	/^    int ID1;$/;"	m	struct:MSG	access:public
 ID2	STRUCT.h	/^    int ID2;                    \/\/ 被连接设备ID$/;"	m	struct:EVENT_REC	access:public
 ID2	STRUCT.h	/^    int ID2;$/;"	m	struct:MSG	access:public
 INPUT_DATA_FILE	data_input.cpp	28;"	d	file:
-INTERVAL_TIME	STRUCT.h	31;"	d
+INTERVAL_TIME	STRUCT.h	32;"	d
 M	tmp/t1.cpp	/^map < int, int > M; $/;"	v
-MAXN	STRUCT.h	30;"	d
+MAXN	STRUCT.h	31;"	d
 MIN_CONTACTS_FREQUENCY	table_record/table_record.cpp	29;"	d	file:
-MP	STRUCT.h	27;"	d
+MP	STRUCT.h	28;"	d
 MP	tmp/map.cpp	23;"	d	file:
 MP	tmp/t1.cpp	43;"	d	file:
 MP	tmp/t7.cpp	28;"	d	file:
@@ -70,13 +74,14 @@ MSG::direct_vote	STRUCT.h	/^    VOTE direct_vote;                   \/\/ 该节�
 MSG::indirect_vote	STRUCT.h	/^    VOTE indirect_vote;                 \/\/ 该节点的间接投票$/;"	m	struct:MSG	access:public
 MSG::msg_rec	STRUCT.h	/^    MSG_REC msg_rec;                    \/\/ 节点B需要记录的信息$/;"	m	struct:MSG	access:public
 MSG_REC	STRUCT.h	/^    MSG_REC()$/;"	f	struct:MSG_REC	access:public	signature:()
-MSG_REC	STRUCT.h	/^    MSG_REC(int state, int adj_max_state, int adj_max_node, int contacts)$/;"	f	struct:MSG_REC	access:public	signature:(int state, int adj_max_state, int adj_max_node, int contacts)
+MSG_REC	STRUCT.h	/^    MSG_REC(int state, int adj_max_state, int adj_max_node, int contacts, bool is_dominator)$/;"	f	struct:MSG_REC	access:public	signature:(int state, int adj_max_state, int adj_max_node, int contacts, bool is_dominator)
 MSG_REC	STRUCT.h	/^struct MSG_REC                          \/\/ 记录相邻节点信息$/;"	s
 MSG_REC::MSG_REC	STRUCT.h	/^    MSG_REC()$/;"	f	struct:MSG_REC	access:public	signature:()
-MSG_REC::MSG_REC	STRUCT.h	/^    MSG_REC(int state, int adj_max_state, int adj_max_node, int contacts)$/;"	f	struct:MSG_REC	access:public	signature:(int state, int adj_max_state, int adj_max_node, int contacts)
+MSG_REC::MSG_REC	STRUCT.h	/^    MSG_REC(int state, int adj_max_state, int adj_max_node, int contacts, bool is_dominator)$/;"	f	struct:MSG_REC	access:public	signature:(int state, int adj_max_state, int adj_max_node, int contacts, bool is_dominator)
 MSG_REC::adj_max_node	STRUCT.h	/^    int adj_max_node;                   \/\/ 相邻节点B记录的相邻最大state节点C的ID$/;"	m	struct:MSG_REC	access:public
 MSG_REC::adj_max_state	STRUCT.h	/^    int adj_max_state;                  \/\/ 相邻节点B记录的相邻最大state节点C的state$/;"	m	struct:MSG_REC	access:public
 MSG_REC::contacts	STRUCT.h	/^    int contacts;                       \/\/ 与C的连接次数$/;"	m	struct:MSG_REC	access:public
+MSG_REC::is_dominator	STRUCT.h	/^    bool is_dominator;                   \/\/ 是否为DOR$/;"	m	struct:MSG_REC	access:public
 MSG_REC::state	STRUCT.h	/^    int state;                          \/\/ 相邻节点B的state$/;"	m	struct:MSG_REC	access:public
 M_adj_node	NODE.h	/^    map < int, MSG_REC > M_adj_node;            \/\/ 附近节点信息.该信息不是实时的.$/;"	m	struct:NODE	access:public
 M_contacts_rec	NODE.h	/^    map < int, int > M_contacts_rec;            \/\/ 记录该节点与其他节点的连接次数. <i, j>与ID为i的节点连接了j次.$/;"	m	struct:NODE	access:public
@@ -119,6 +124,7 @@ NODE::in_Q_heap	node_function.cpp	/^vector < pair < int, int > >::iterator NODE:
 NODE::init	tmp/q.h	/^    int init(int a, int b){$/;"	f	struct:NODE	access:public	signature:(int a, int b)
 NODE::is_dominator	NODE.h	/^    bool is_dominator;                  \/\/ 根据dor_prob随机决定是否为dor$/;"	m	struct:NODE	access:public
 NODE::random_dor	NODE.h	/^    bool random_dor(double prob);$/;"	p	struct:NODE	access:public	signature:(double prob)
+NODE::random_dor	node_function.cpp	/^bool NODE::random_dor(double prob)$/;"	f	class:NODE	signature:(double prob)
 NODE::state	NODE.h	/^    int state;                          \/\/ 支配值.表明该节点为支配节点或被支配节点.$/;"	m	struct:NODE	access:public
 NODE::update	NODE.h	/^    int update(int current_time);$/;"	p	struct:NODE	access:public	signature:(int current_time)
 NODE::update	node_function.cpp	/^int NODE::update(int current_time)$/;"	f	class:NODE	signature:(int current_time)
@@ -148,7 +154,7 @@ REC::time	table_record/table_record.cpp	/^    vector < int > time; $/;"	m	struct
 REC::tot_contact	table_record/table_record.cpp	/^    int tot_contact; $/;"	m	struct:REC	file:	access:public
 REC::tot_contact_node	table_record/table_record.cpp	/^    int tot_contact_node;       \/\/ 该节点一共接触了多少个节点$/;"	m	struct:REC	file:	access:public
 REC::tot_time	table_record/table_record.cpp	/^    int tot_time; $/;"	m	struct:REC	file:	access:public
-RESERVE_TIME	STRUCT.h	32;"	d
+RESERVE_TIME	STRUCT.h	33;"	d
 STRUCT_H_H	STRUCT.h	2;"	d
 VOTE	STRUCT.h	/^    VOTE(): from_ID(0), to_ID(0), vote(0)$/;"	f	struct:VOTE	access:public	signature:()
 VOTE	STRUCT.h	/^    VOTE(int from_ID, int to_ID, int vote)$/;"	f	struct:VOTE	access:public	signature:(int from_ID, int to_ID, int vote)
@@ -158,7 +164,7 @@ VOTE::VOTE	STRUCT.h	/^    VOTE(int from_ID, int to_ID, int vote)$/;"	f	struct:VO
 VOTE::from_ID	STRUCT.h	/^    int from_ID;                \/\/ 投票节点ID$/;"	m	struct:VOTE	access:public
 VOTE::to_ID	STRUCT.h	/^    int to_ID;                  \/\/ 被投票节点ID$/;"	m	struct:VOTE	access:public
 VOTE::vote	STRUCT.h	/^    int vote;                   \/\/ 各类票数$/;"	m	struct:VOTE	access:public
-VOTE_K	STRUCT.h	29;"	d
+VOTE_K	STRUCT.h	30;"	d
 _TEST_H_	tmp/header_test/test.h	2;"	d
 a	tmp/A.h	/^    int a; $/;"	m	struct:A	access:public
 a	tmp/q.h	/^    int a; $/;"	m	struct:NODE	access:public
@@ -209,6 +215,7 @@ input	tmp/a.cpp	/^void input()$/;"	f	signature:()
 input	tmp/b.cpp	/^void input(); $/;"	p	file:	signature:()
 interval	STRUCT.h	/^    int interval;               \/\/ 连接时间间隔$/;"	m	struct:EVENT_REC	access:public
 is_dominator	NODE.h	/^    bool is_dominator;                  \/\/ 根据dor_prob随机决定是否为dor$/;"	m	struct:NODE	access:public
+is_dominator	STRUCT.h	/^    bool is_dominator;                   \/\/ 是否为DOR$/;"	m	struct:MSG_REC	access:public
 main	main.cpp	/^int main()$/;"	f	signature:()
 main	table_record/table_record.cpp	/^int main()$/;"	f	signature:()
 main	tmp/b.cpp	/^int main()$/;"	f	signature:()
@@ -222,9 +229,11 @@ main	tmp/t5.cpp	/^int main()$/;"	f	signature:()
 main	tmp/t6.cpp	/^int main()$/;"	f	signature:()
 main	tmp/t7.cpp	/^int main()$/;"	f	signature:()
 main	tmp/t8.cpp	/^int main()$/;"	f	signature:()
+main	tmp/t9.cpp	/^int main()$/;"	f	signature:()
 msg_rec	STRUCT.h	/^    MSG_REC msg_rec;                    \/\/ 节点B需要记录的信息$/;"	m	struct:MSG	access:public
 num	STRUCT.h	/^    int num;                    \/\/ 连接编号$/;"	m	struct:EVENT_REC	access:public
 random_dor	NODE.h	/^    bool random_dor(double prob);$/;"	p	struct:NODE	access:public	signature:(double prob)
+random_dor	node_function.cpp	/^bool NODE::random_dor(double prob)$/;"	f	class:NODE	signature:(double prob)
 s	tmp/t8.cpp	/^    int s; $/;"	m	struct:A	file:	access:public
 simulation_time_based	experiment_test.cpp	/^int simulation_time_based()$/;"	f	signature:()
 simulation_time_based	main.cpp	/^int simulation_time_based();$/;"	p	file:	signature:()

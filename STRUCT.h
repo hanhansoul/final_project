@@ -31,6 +31,8 @@ using namespace std;
 #define MAXN 100                // iMote设备数, 节点编号从1开始
 #define INTERVAL_TIME 100       // 投票淘汰间隔时间
 #define RESERVE_TIME 1000       // 投票保留间隔时间
+#define CHECK_TIME_LEN 100      // check时间间隔
+#define DOR_THRESHOLD 0.8       // 支配概率dor_prob阈值
 
 struct EVENT_REC                // 记录连接事件
 {
