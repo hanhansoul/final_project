@@ -9,11 +9,69 @@
 
 extern ofstream fout;
 
+bool cmp(const pair<int, int> &t1, const pair<int, int> &t2)
+{
+    return t1.second < t2.second;
+}
+
+int NODE::vote_expire(int current_time)
+{
+    tmp_adj_max_state = state;
+    tmp_adj_max_node = ID;
+    contacts = 0;
+
+    while (!Q_vote_rev.empty() && current_time - Q_vote_rev.front().first >= RESERVE_TIME)
+    {
+        state -= Q_vote_rev.front().second;
+        Q_vote_rev.pop();
+    }
+
+    Q_vote_rev.push(MP(current_time, 0));
+    map < int, MSG_REC >::iterator iter;
+    map <int, int>::iterator c_iter;
+
+    for (iter = M_adj_node.begin(); iter != M_adj_node.end();)
+    {
+        if (current_time - iter->second.time >= RESERVE_TIME)
+        {
+            M_contacts_rec.erase(iter->second.ID);
+            M_adj_node.erase(iter++);
+        }
+        else
+        {
+            if (M_contacts_rec.count(iter->second.ID))
+            {
+                M_contacts_rec[iter->second.ID]--;
+
+                if (M_contacts_rec[iter->second.ID] == 0)
+                {
+                    M_contacts_rec.erase(iter->second.ID);
+                    M_adj_node.erase(iter++);
+                    continue;
+                }
+            }
+
+            iter++;
+        }
+    }
+
+    Q_max_k_heap.clear();
+
+    for (c_iter = M_contacts_rec.begin(); c_iter != M_contacts_rec.end(); ++c_iter)
+    {
+        Q_max_k_heap.push_back(MP(c_iter->first, c_iter->second));
+    }
+
+    sort(Q_max_k_heap.begin(), Q_max_k_heap.end(), cmp);
+    return 0;
+}
+
 bool NODE::random_dor(double prob)
 {
     double t = 1.0 * rand() / RAND_MAX;
     return t - prob <= 0.00001;
 }
+
 
 MSG NODE::connect(int to_ID)                    // 向其他节点发出连接, 根据节点ID连接, ID即为被连接节点ID
 {
@@ -139,19 +197,25 @@ MSG NODE::connect(int to_ID)                    // 向其他节点发出连接, 
 
     VOTE direct_vote(ID, to_ID, voteB);
     VOTE indirect_vote(to_ID, indirect_vote_ID, voteC);
-    MSG_REC msg_rec(state, adj_max_state, adj_max_node, contacts, is_dominator);
+    MSG_REC msg_rec(ID, state, adj_max_state, adj_max_node, contacts, is_dominator, duration);
     return MSG(ID, to_ID, msg_rec, direct_vote, indirect_vote);
 }
 
 vector < pair < int, int > >::iterator NODE::in_Q_heap(int ID)
 {
     vector < pair < int, int > >::iterator pos;
+    int k;
 
-    for (pos = Q_max_k_heap.begin(); pos != Q_max_k_heap.end(); pos++)
+    for (k = 0, pos = Q_max_k_heap.begin(); k < VOTE_K && pos != Q_max_k_heap.end(); pos++)
         if (ID == pos->first)
         {
             break;
         }
+
+    if (k == VOTE_K)
+    {
+        pos = Q_max_k_heap.end();
+    }
 
     return pos;
 }
@@ -173,21 +237,23 @@ int NODE::Q_heap_insert(pair < int, int > node)
             break;
         }
 
-    if (Q_max_k_heap.size() > VOTE_K)
-    {
-        Q_max_k_heap.pop_back();
-    }
-    else if (Q_max_k_heap.size() < VOTE_K)
-    {
-        Q_max_k_heap.push_back(node);
-    }
-
+    /*
+        if (Q_max_k_heap.size() > VOTE_K)
+        {
+            Q_max_k_heap.pop_back();
+        }
+        else if (Q_max_k_heap.size() < VOTE_K)
+        {
+            Q_max_k_heap.push_back(node);
+        }
+    */
     return 0;
 }
 
 int NODE::be_connected(MSG msg)                 // 被投票
 {
     state += msg.direct_vote.vote;
+    Q_vote_rev.back().second += msg.direct_vote.vote;
     MSG_REC t_rec = msg.msg_rec;
 
     if (M_adj_node.count(msg.ID1))
@@ -207,22 +273,30 @@ int NODE::be_connected(MSG msg)                 // 被投票
         M_indirect_vote.insert(MP(msg.indirect_vote.to_ID, msg.indirect_vote.vote));
     }
 
-    if (adj_max_state < t_rec.state)
+    if (tmp_adj_max_state < t_rec.state)
     {
-        adj_max_state = t_rec.state;
-        adj_max_node = msg.ID1;
+        tmp_adj_max_state = t_rec.state;
+        tmp_adj_max_node = msg.ID1;
 
         if (M_contacts_rec.count(msg.ID1))
         {
-            contacts = M_contacts_rec[msg.ID1];
+            tmp_contacts = M_contacts_rec[msg.ID1];
         }
     }
 
-    if (adj_max_state <= state)
+    /*
+        if (tmp_adj_max_state <= state)
+        {
+            tmp_adj_max_state = state;
+            tmp_adj_max_node = ID;
+            tmp_contacts = 0;
+        }
+    */
+    if (adj_max_state < tmp_adj_max_state)
     {
-        adj_max_state = state;
-        adj_max_node = ID;
-        contacts = 0;
+        adj_max_state = tmp_adj_max_state;
+        adj_max_node = tmp_adj_max_node;
+        contacts = tmp_contacts;
     }
 
     return 0;
@@ -232,8 +306,8 @@ int NODE::update(int current_time)
 {
     // update投票, 淘汰超过保留时间的投票.
     update_time(current_time);
-    // 确定is_dorminator的状态
-    is_dominator = random_dor(dor_prob);
+    vote_expire(current_time);
+    // 确定is_dominator的状态
     map < int, MSG_REC >::iterator iter;
     int sum_adj_dor, sum_adj_dee;
     double avg_adj_dor, avg_adj_dee;
@@ -271,15 +345,25 @@ int NODE::update(int current_time)
     }
 
     double p, q;
-    p = adj_max_state == 0 ? 1.0 : 1.0 * state / adj_max_state;
 
-    if (state == 0)
+    // p = adj_max_state == 0 ? 1.0 : 1.0 * state / adj_max_state;
+    if (state == 0 || adj_max_state == 0)
     {
-        q = 1.0;
+        p = 0;
+    }
+    else
+    {
+        p = 1.0 * state / adj_max_state;
+    }
+
+    if (state == 0 || avg_adj_dee == 0)
+    {
+        q = 0;
+        p = 0;
     }
     else if (avg_adj_dor == 0)
     {
-        q = 2.0;
+        q = state / (avg_adj_dee * sum_adj_dee);
     }
     else
     {
@@ -302,49 +386,12 @@ int NODE::update(int current_time)
         flag = false;
     }
 
-#if DEBUG
-
-    if (ID == 71)
-    {
-        fout << q << " " << p << " ";
-        fout << flag << endl;
-        // fout << state << " " << avg_adj_dee << " " << avg_adj_dor << " " << q << endl;
-    }
-
-#endif
-    // vote_expire(current_time);
-    /*
-        // state增加
-
-        // 根据投票更新节点状态
-        // I.
-        // Q_max_k_heap M_adj_node
-        for(int i = 0; i < VOTE_K; i++)
-        {
-            int tID = Q_max_k_heap[i].first;
-            if(M_adj_node.count(tID))
-            {
-                if(is_dominator(M_adj_node[tID]))
-                {
-                    // 节点投票的节点为DOR, DEE增大.
-                }else
-                {
-                    // 节点投票的节点为DEE, DOR增大.
-                }
-            }else
-            {
-                // 节点的投票的节点信息缺失
-            }
-        }
-
-        // II.
-        // tot_vote
-        for(int i = 0; i < VOTE_K; i++)
-        {
-
-        }
-        last_tot_vote = tot_vote;
-    */
+    // is_dominator = random_dor(dor_prob);
+    is_dominator = (dor_prob >= DOR_THRESHOLD);
+    //
+    adj_max_state = tmp_adj_max_state;
+    adj_max_node = tmp_adj_max_node;
+    contacts = tmp_contacts;
     return 0;
 }
 

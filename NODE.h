@@ -20,8 +20,12 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
         M_contacts_rec.clear();
         M_indirect_vote.clear();
         dor_prob = 0.5;
-        is_dominator = random_dor(dor_prob);
-        // Q_vote_rev = queue < VOTE >();
+        is_dominator = false;
+        Q_vote_rev = queue < pair<int, int> >();
+        tmp_adj_max_state = 0;
+        tmp_adj_max_node = ID;
+        contacts = 0;
+        tmp_contacts = 0;
     }
 
     int ID;                             // 该节点ID
@@ -30,6 +34,9 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
     int adj_max_state;                  // 附近节点中的最大state值
     int adj_max_node;                   // 附近节点中的最大state节点ID
     int contacts;
+    int tmp_adj_max_state;
+    int tmp_adj_max_node;
+    int tmp_contacts;
     bool is_dominator;                  // 根据dor_prob随机决定是否为dor
 
     int adj_tot_state;                  // 附近节点的state之和, 通过M_adj_node更新
@@ -39,7 +46,7 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
     vector < pair < int, int > > Q_max_k_heap;  // 保存前k大的数. < i, j > ===== < ID, 连接次数>
 
     // VOTE tot_vote;                           // 当前节点所获得的各类票总数.
-    // queue < VOTE > Q_vote_rev;               // 节点获得投票, 分时间段间, 将该段时间内获得的票加入队首, 将过期的票从队尾去除.
+    queue < pair<int, int> > Q_vote_rev;        // 节点获得投票, 分时段间, 将时段内获得的票加入队首, 将过期的票从队尾去除. <time, vote>
     map < int, int > M_indirect_vote;           // 记录二段投票, < ID, value >
     map < int, MSG_REC > M_adj_node;            // 附近节点信息.该信息不是实时的.
 
@@ -52,7 +59,8 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
     int Q_heap_insert(pair < int, int > node);
 
     bool random_dor(double prob);
-    // int vote_expire(int current_time);
+    int vote_expire(int current_time);
+    // bool cmp(const pair<int, int> &t1, const pair<int, int> &t2);
 };
 
 extern vector < EVENT_REC > Q_contact_rec_node_based[MAXN];     // 根据节点来记录连接

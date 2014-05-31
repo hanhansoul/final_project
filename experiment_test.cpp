@@ -32,11 +32,11 @@ int simulation_time_based()
     int tmp_pos = 0;
     //
     bool contact_to_dor[MAXN + 10];
-    memset(node_is_dor, false, sizeof(node_is_dor));
+    bool Q[MAXN + 10], P[MAXN + 10];
     memset(tmp_node_is_dor, false, sizeof(tmp_node_is_dor));
     srand(time(NULL));
 
-    for (int i = 0; ; update_time += INTERVAL_TIME)
+    for (int i = 0, ll = 1; ; update_time += INTERVAL_TIME, ll++)
     {
         // 处理连接
         for (; i < (int)Q_contact_rec_time_based.size() && Q_contact_rec_time_based[i].start_time <= update_time; i++)
@@ -51,6 +51,8 @@ int simulation_time_based()
 
         // update
         tmp_pos = (tmp_pos + 1) % len;
+        fout_1 << ll << "\t";
+        int sum_dor = 0;
 
         for (int j = 1; j < (int)Q_node_rec.size(); j++)
         {
@@ -60,68 +62,98 @@ int simulation_time_based()
             if (Q_node_rec[j].dor_prob >= DOR_THRESHOLD)
             {
                 tmp_node_is_dor[tmp_pos][id] = true;
-                tmp_node_is_dor[(tmp_pos + 1) % len][id] = false;
+                sum_dor++;
                 fout_1 << id << " ";
             }
+
+            tmp_node_is_dor[(tmp_pos + 1) % len][id] = false;
         }
 
         fout_1 << endl;
+        memset(node_is_dor, false, sizeof(node_is_dor));
 
         for (int j = 1; j < (int)Q_node_rec.size(); j++)
         {
             int id = Q_node_rec[j].ID;
 
-            for (int k = tmp_pos, l = 0; l < len; k = (k + 1) % len, l++)
+            for (int k = tmp_pos, l = 0; l < len; k = (k - 1 + len) % len, l++)
             {
                 node_is_dor[id] |= tmp_node_is_dor[k][id];
             }
         }
 
         // check
+        // 查询该时间段有多少节点未被支配, 2跳支配.
         int sum_iso_node = 0;
         int sum_event_rec = 0;
 
         if (current_time >= CHECK_TIME_LEN)
         {
             memset(contact_to_dor, false, sizeof(contact_to_dor));
+            memset(Q, false, sizeof(Q));
+            memset(P, false, sizeof(P));
 
+            /*
+            // 1跳支配
             for (; contact_rec_pos <= i ; contact_rec_pos++)
             {
-                int id1 = Q_contact_rec_time_based[contact_rec_pos].ID1;                       // 主动连接设备ID
-                int id2 = Q_contact_rec_time_based[contact_rec_pos].ID2;                       // 主动连接设备ID
+                int id1 = Q_contact_rec_time_based[contact_rec_pos].ID1;            // 主动连接设备ID
+                int id2 = Q_contact_rec_time_based[contact_rec_pos].ID2;            // 主动连接设备ID
 
                 if (id1 <= MAXN && id2 <= MAXN)
                 {
                     sum_event_rec++;
+                    contact_to_dor[id1] = node_is_dor[id2];
+                    Q[id1]=true;
+                }
+            }
+            */
+            // 2跳支配
+            for (int p = contact_rec_pos; p <= i ; p++)
+            {
+                int id1 = Q_contact_rec_time_based[p].ID1;                          // 主动连接设备ID
+                int id2 = Q_contact_rec_time_based[p].ID2;                          // 主动连接设备ID
+
+                if (id1 <= MAXN && id2 <= MAXN)
+                {
+                    sum_event_rec++;
+                    contact_to_dor[id1] = node_is_dor[id2];
+                    Q[id1] = true;
+                    P[id2] = true;
+                }
+            }
+
+            for (int j = 1; j < (int)Q_node_rec.size(); j++)
+            {
+                if (contact_to_dor[j])
+                {
+                    node_is_dor[j] = true;
+                }
+            }
+
+            for (; contact_rec_pos <= i ; contact_rec_pos++)
+            {
+                int id1 = Q_contact_rec_time_based[contact_rec_pos].ID1;            // 主动连接设备ID
+                int id2 = Q_contact_rec_time_based[contact_rec_pos].ID2;            // 主动连接设备ID
+
+                if (id1 <= MAXN && id2 <= MAXN)
+                {
                     contact_to_dor[id1] = node_is_dor[id2];
                 }
             }
 
             for (int j = 1; j < (int)Q_node_rec.size(); j++)
             {
-                if (!contact_to_dor[Q_node_rec[j].ID])
+                if (!node_is_dor[Q_node_rec[j].ID] && !contact_to_dor[Q_node_rec[j].ID])
                 {
                     sum_iso_node++;
                 }
             }
 
-            if (sum_event_rec > 100)
-            {
-                fout << sum_iso_node << " " << sum_event_rec << endl;
-            }
+            fout << ll << "\t" << sum_iso_node << " " << sum_event_rec << endl;
         }
 
-#if DEBUG
-        cout << Q_node_rec[13].ID << " " << Q_node_rec[13].dor_prob << " " << Q_node_rec[13].adj_max_node << endl;
-        fout << Q_node_rec[71].ID << " " << Q_node_rec[71].dor_prob << " " << Q_node_rec[71].adj_max_state <<
-             " " << Q_node_rec[71].state << endl;
-
-        if (Q_node_rec[71].dor_prob == 0)
-        {
-            fout << i << " " << update_time << endl;
-        }
-
-#endif
+        // check end
         current_time = update_time;
 
         // 跳出循环, 仿真结束.
@@ -131,36 +163,53 @@ int simulation_time_based()
         }
     }
 
-    sort(Q_node_rec.begin() + 1, Q_node_rec.end(), cmp);
-    // int sum = 0;
+    /*
+        sort(Q_node_rec.begin() + 1, Q_node_rec.end(), cmp);
 
-    for (int i = 1; i <= MAXN; i++)
-    {
-        if (Q_node_rec[i].dor_prob > 0.9)
+        for (int i = 1; i <= MAXN; i++)
         {
-            cout << Q_node_rec[i].ID << " " << Q_node_rec[i].dor_prob << endl;
-            // printf("%d\t%d\t%d\t%d\t%d\n", Q_node_rec[i].ID, Q_node_rec[i].adj_max_node, Q_node_rec[i].state,
-            // Q_node_rec[i].adj_max_state, Q_node_rec[i].adj_tot_state);
+            cout << Q_node_rec[i].ID << " " << Q_node_rec[i].dor_prob << " "
+                 << Q_node_rec[i].state << " " << Q_node_rec[i].adj_max_node << endl;
         }
-
+    */
 #if DEBUG
 
-        /*
-                if (Q_node_rec[i].dor_prob > 0.5000)
-                {
-                    printf("%d\t%.4lf\n", Q_node_rec[i].ID, Q_node_rec[i].dor_prob);
-                    sum++;
-                }
-        */
+    if (sum_event_rec == 294)
+    {
+        for (int j = 1; j < (int)Q_node_rec.size(); j++)
+        {
+            if (Q[j] && !node_is_dor[j])
+            {
+                cout << j << " ";
+            }
+        }
 
-        if (Q_node_rec[i].adj_max_node == Q_node_rec[i].ID)
-            printf("%d\t%d\t%d\t%d\t%d\n", Q_node_rec[i].ID, Q_node_rec[i].adj_max_node, Q_node_rec[i].state,
-                   Q_node_rec[i].adj_max_state, Q_node_rec[i].adj_tot_state);
+        cout << endl;
 
-#endif
+        for (int j = 1; j < (int)Q_node_rec.size(); j++)
+        {
+            if (P[j] && !node_is_dor[j])
+            {
+                cout << j << " ";
+            }
+        }
+
+        cout << endl;
+
+        for (int j = 1; j < (int)Q_node_rec.size(); j++)
+        {
+            if (node_is_dor[j])
+            {
+                cout << j << " ";
+            }
+        }
+
+        cout << endl;
     }
 
+#endif
     fout.close();
+    fout_1.close();
     return 0;
 }
 

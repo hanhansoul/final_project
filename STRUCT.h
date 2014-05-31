@@ -31,8 +31,8 @@ using namespace std;
 #define MAXN 100                // iMote设备数, 节点编号从1开始
 #define INTERVAL_TIME 100       // 投票淘汰间隔时间
 #define RESERVE_TIME 1000       // 投票保留间隔时间
-#define CHECK_TIME_LEN 100      // check时间间隔
-#define DOR_THRESHOLD 0.8       // 支配概率dor_prob阈值
+#define CHECK_TIME_LEN 1000     // check时间间隔
+#define DOR_THRESHOLD 1         // 支配概率dor_prob阈值
 
 struct EVENT_REC                // 记录连接事件
 {
@@ -81,20 +81,24 @@ struct MSG_REC                          // 记录相邻节点信息
     {
     }
 
-    MSG_REC(int state, int adj_max_state, int adj_max_node, int contacts, bool is_dominator)
+    MSG_REC(int ID,int state, int adj_max_state, int adj_max_node, int contacts, bool is_dominator, int time)
     {
+        this->ID=ID;
         this->state = state;
         this->adj_max_state = adj_max_state;
         this->adj_max_node = adj_max_node;
         this->contacts = contacts;
         this->is_dominator = is_dominator;
+        this->time = time;
     }
 
+    int ID;
     int state;                          // 相邻节点B的state
     int adj_max_state;                  // 相邻节点B记录的相邻最大state节点C的state
     int adj_max_node;                   // 相邻节点B记录的相邻最大state节点C的ID
     int contacts;                       // 与C的连接次数
-    bool is_dominator;                   // 是否为DOR
+    bool is_dominator;                  // 是否为DOR
+    int time;                           // 最近一次连接的时间
 };
 
 struct MSG                              // 一次连接传递的信息
