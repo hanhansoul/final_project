@@ -32,7 +32,7 @@ using namespace std;
 #define INTERVAL_TIME 100       // 投票淘汰间隔时间
 #define RESERVE_TIME 1000       // 投票保留间隔时间
 #define CHECK_TIME_LEN 1000     // check时间间隔
-#define DOR_THRESHOLD 1         // 支配概率dor_prob阈值
+#define DOR_THRESHOLD 0.5       // 支配概率dor_prob阈值
 
 struct EVENT_REC                // 记录连接事件
 {

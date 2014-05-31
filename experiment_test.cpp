@@ -9,8 +9,8 @@
 extern vector < EVENT_REC > Q_contact_rec_time_based;       // 表示每一次连接
 extern vector < NODE > Q_node_rec;                          // 表示每一个节点
 int connection(EVENT_REC record);
-ofstream fout("tmp_output");
-ofstream fout_1("tmp_output_1");
+ofstream fout("iso_nodes.out");
+ofstream fout_1("dor_nodes.out");
 
 bool cmp(const NODE & t1, const NODE & t2)
 {
@@ -69,7 +69,7 @@ int simulation_time_based()
             tmp_node_is_dor[(tmp_pos + 1) % len][id] = false;
         }
 
-        fout_1 << endl;
+        fout_1 << 0 << endl;
         memset(node_is_dor, false, sizeof(node_is_dor));
 
         for (int j = 1; j < (int)Q_node_rec.size(); j++)
@@ -172,42 +172,6 @@ int simulation_time_based()
                  << Q_node_rec[i].state << " " << Q_node_rec[i].adj_max_node << endl;
         }
     */
-#if DEBUG
-
-    if (sum_event_rec == 294)
-    {
-        for (int j = 1; j < (int)Q_node_rec.size(); j++)
-        {
-            if (Q[j] && !node_is_dor[j])
-            {
-                cout << j << " ";
-            }
-        }
-
-        cout << endl;
-
-        for (int j = 1; j < (int)Q_node_rec.size(); j++)
-        {
-            if (P[j] && !node_is_dor[j])
-            {
-                cout << j << " ";
-            }
-        }
-
-        cout << endl;
-
-        for (int j = 1; j < (int)Q_node_rec.size(); j++)
-        {
-            if (node_is_dor[j])
-            {
-                cout << j << " ";
-            }
-        }
-
-        cout << endl;
-    }
-
-#endif
     fout.close();
     fout_1.close();
     return 0;
