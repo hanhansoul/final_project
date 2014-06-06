@@ -21,20 +21,33 @@
 #include <cstdlib>
 #include <ctime>
 #include <cstring>
+#define DEBUG 0
 
-using namespace std; 
+using namespace std;
 
 #define MP(a, b) make_pair(a, b)
 
 #define VOTE_K 3                // 投票种类, 0, 1, 2 ... 类票
 #define MAXN 100                // iMote设备数, 节点编号从1开始
 #define INTERVAL_TIME 100       // 投票淘汰间隔时间
+#define RESERVE_TIME 1000       // 投票保留间隔时间
+#define CHECK_TIME_LEN 1000     // check时间间隔
+#define DOR_THRESHOLD 0.5       // 支配概率dor_prob阈值
 
-struct REC                      // 记录连接事件
+struct EVENT_REC                // 记录连接事件
 {
-    REC():ID1(0), ID2(0), start_time(0), end_time(0), num(0), interval(0)
+    EVENT_REC(): ID1(0), ID2(0), start_time(0), end_time(0), num(0), interval(0)
     {
+    }
 
+    EVENT_REC(int ID1, int ID2, int start_time, int end_time, int num, int interval)
+    {
+        this->ID1 = ID1;
+        this->ID2 = ID2;
+        this->start_time = start_time;
+        this->end_time = end_time;
+        this->num = num;
+        this->interval = interval;
     }
 
     int ID1;                    // 主动连接设备ID
@@ -42,29 +55,72 @@ struct REC                      // 记录连接事件
     int start_time, end_time;   // 连接开始和结束时间
     int num;                    // 连接编号
     int interval;               // 连接时间间隔
-}; 
+};
 
-struct VOTE{                    // 记录获得的投票
-    VOTE():time(0)
+struct VOTE                     // 投票
+{
+    VOTE(): from_ID(0), to_ID(0), vote(0)
     {
-        memset(0, sizeof(v), 0); 
     }
-    VOTE(int t):time(t)
+
+    VOTE(int from_ID, int to_ID, int vote)
     {
-        memset(0, sizeof(v), 0); 
+        this->from_ID = from_ID;
+        this->to_ID = to_ID;
+        this->vote = vote;
     }
-    int v[VOTE_K];              // 各类票数
-    int time;                   // 该轮投票时间, tot_vote中无用
-}; 
+
+    int vote;                   // 各类票数
+    int from_ID;                // 投票节点ID
+    int to_ID;                  // 被投票节点ID
+};
+
+struct MSG_REC                          // 记录相邻节点信息
+{
+    MSG_REC()
+    {
+    }
+
+    MSG_REC(int ID,int state, int adj_max_state, int adj_max_node, int contacts, bool is_dominator, int time)
+    {
+        this->ID=ID;
+        this->state = state;
+        this->adj_max_state = adj_max_state;
+        this->adj_max_node = adj_max_node;
+        this->contacts = contacts;
+        this->is_dominator = is_dominator;
+        this->time = time;
+    }
+
+    int ID;
+    int state;                          // 相邻节点B的state
+    int adj_max_state;                  // 相邻节点B记录的相邻最大state节点C的state
+    int adj_max_node;                   // 相邻节点B记录的相邻最大state节点C的ID
+    int contacts;                       // 与C的连接次数
+    bool is_dominator;                  // 是否为DOR
+    int time;                           // 最近一次连接的时间
+};
 
 struct MSG                              // 一次连接传递的信息
 {
-    int ID1; 
-    int ID2; 
-    int state;                          // 主动连接节点的状态
-    VOTE vote;                          // 主动连接节点票数
-    bool voting;                        // 是否投票
-    int vote_level;                     // 投票种类
-}; 
+    MSG(): ID1(0), ID2(0), msg_rec(), direct_vote(), indirect_vote()
+    {
+    }
+
+    MSG(int ID1, int ID2, MSG_REC msg_rec, VOTE direct_vote, VOTE indirect_vote)
+    {
+        this->ID1 = ID1;
+        this->ID2 = ID2;
+        this->msg_rec = msg_rec;
+        this->direct_vote = direct_vote;
+        this->indirect_vote = indirect_vote;
+    }
+
+    int ID1;
+    int ID2;
+    MSG_REC msg_rec;                    // 节点B需要记录的信息
+    VOTE direct_vote;                   // 该节点的直接投票
+    VOTE indirect_vote;                 // 该节点的间接投票
+};
 
 #endif

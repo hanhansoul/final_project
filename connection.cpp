@@ -8,7 +8,7 @@
 
 extern vector < NODE > Q_node_rec;              // 表示每一个节点
 
-int connection(REC record)
+int connection(EVENT_REC record)
 {
     // connection 一次连接
     int ID1 = record.ID1;                       // 主动连接设备ID
@@ -20,27 +20,20 @@ int connection(REC record)
         
     if(ID1 > 100 || ID2 > 100) 
     {
-        printf("external device.\n"); 
+        // printf("external device.\n"); 
         return -1; 
     }
 
-    // ID1 --> ID2
-    NODE &node1 = Q_node_rec[ID1];              // 连接节点对的节点信息
-    NODE &node2 = Q_node_rec[ID2]; 
+    // update
+    Q_node_rec[ID1].update_time(start_time); 
+    Q_node_rec[ID2].update_time(start_time); 
+
     MSG msg; 
-
-    // node1.duration = node2.duration = start_time;    // 更新设备运行时间
-
+    // ID1 --> ID2
     // ID1
-    node1.update(start_time); 
-    node1.connect(ID2); 
-    node1.vote_for(ID2, msg); 
-    node1.game(); 
-
+    msg = Q_node_rec[ID1].connect(ID2); 
     // ID2 
-    node2.update(start_time); 
-    node2.be_voted(ID1, msg); 
-    node2.game(); 
+    Q_node_rec[ID2].be_connected(msg); 
 
     return 0; 
 }
