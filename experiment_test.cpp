@@ -9,8 +9,8 @@
 extern vector < EVENT_REC > Q_contact_rec_time_based;       // 表示每一次连接
 extern vector < NODE > Q_node_rec;                          // 表示每一个节点
 int connection(EVENT_REC record);
-ofstream fout("iso_nodes.out");
-ofstream fout_1("dor_nodes.out");
+ofstream fout_iso("iso_nodes.out");
+ofstream fout_dor("dor_nodes.out");
 
 bool cmp(const NODE & t1, const NODE & t2)
 {
@@ -51,7 +51,7 @@ int simulation_time_based()
 
         // update
         tmp_pos = (tmp_pos + 1) % len;
-        fout_1 << ll << "\t";
+        fout_dor << ll << "\t";
         int sum_dor = 0;
 
         for (int j = 1; j < (int)Q_node_rec.size(); j++)
@@ -63,13 +63,13 @@ int simulation_time_based()
             {
                 tmp_node_is_dor[tmp_pos][id] = true;
                 sum_dor++;
-                fout_1 << id << " ";
+                fout_dor << id << " ";
             }
 
             tmp_node_is_dor[(tmp_pos + 1) % len][id] = false;
         }
 
-        fout_1 << 0 << endl;
+        fout_dor << 0 << endl;
         memset(node_is_dor, false, sizeof(node_is_dor));
 
         for (int j = 1; j < (int)Q_node_rec.size(); j++)
@@ -150,7 +150,7 @@ int simulation_time_based()
                 }
             }
 
-            fout << ll << "\t" << sum_iso_node << " " << sum_event_rec << endl;
+            fout_iso << ll << "\t" << sum_iso_node << " " << sum_event_rec << endl;
         }
 
         // check end
@@ -172,8 +172,8 @@ int simulation_time_based()
                  << Q_node_rec[i].state << " " << Q_node_rec[i].adj_max_node << endl;
         }
     */
-    fout.close();
-    fout_1.close();
+    fout_iso.close();
+    fout_dor.close();
     return 0;
 }
 

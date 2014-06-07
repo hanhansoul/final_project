@@ -237,16 +237,6 @@ int NODE::Q_heap_insert(pair < int, int > node)
             break;
         }
 
-    /*
-        if (Q_max_k_heap.size() > VOTE_K)
-        {
-            Q_max_k_heap.pop_back();
-        }
-        else if (Q_max_k_heap.size() < VOTE_K)
-        {
-            Q_max_k_heap.push_back(node);
-        }
-    */
     return 0;
 }
 
