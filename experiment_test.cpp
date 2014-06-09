@@ -35,6 +35,7 @@ int simulation_time_based()
     bool Q[MAXN + 10], P[MAXN + 10];
     memset(tmp_node_is_dor, false, sizeof(tmp_node_is_dor));
     srand(time(NULL));
+    fout_iso << CHECK_TIME_LEN << " " << DOR_THRESHOLD << endl;
 
     for (int i = 0, ll = 1; ; update_time += INTERVAL_TIME, ll++)
     {
@@ -131,14 +132,22 @@ int simulation_time_based()
                 }
             }
 
-            for (; contact_rec_pos <= i ; contact_rec_pos++)
+            for (int j = contact_rec_pos; j <= i ; j++)
             {
-                int id1 = Q_contact_rec_time_based[contact_rec_pos].ID1;            // 主动连接设备ID
-                int id2 = Q_contact_rec_time_based[contact_rec_pos].ID2;            // 主动连接设备ID
+                int id1 = Q_contact_rec_time_based[j].ID1;            // 主动连接设备ID
+                int id2 = Q_contact_rec_time_based[j].ID2;            // 主动连接设备ID
 
                 if (id1 <= MAXN && id2 <= MAXN)
                 {
                     contact_to_dor[id1] = node_is_dor[id2];
+                }
+            }
+
+            for (; contact_rec_pos <= i ; contact_rec_pos++)
+            {
+                if (Q_contact_rec_time_based[contact_rec_pos].start_time >= current_time - CHECK_TIME_LEN)
+                {
+                    break;
                 }
             }
 
