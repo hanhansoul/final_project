@@ -8,7 +8,7 @@
 
 extern vector < EVENT_REC > Q_contact_rec_time_based;       // 表示每一次连接
 extern vector < NODE > Q_node_rec;                          // 表示每一个节点
-int connection(EVENT_REC record);
+int connection(EVENT_REC record, bool data_gen);
 ofstream fout_iso("iso_nodes.out");
 ofstream fout_dor("dor_nodes.out");
 
@@ -42,7 +42,7 @@ int simulation_time_based()
         // 处理连接
         for (; i < (int)Q_contact_rec_time_based.size() && Q_contact_rec_time_based[i].start_time <= update_time; i++)
         {
-            int t = connection(Q_contact_rec_time_based[i]);
+            int t = connection(Q_contact_rec_time_based[i], (i == data_event));
 
             if (t == -1)
             {
@@ -93,27 +93,35 @@ int simulation_time_based()
             memset(contact_to_dor, false, sizeof(contact_to_dor));
             memset(Q, false, sizeof(Q));
             memset(P, false, sizeof(P));
+            int sum_dor_node = 0;
 
-            /*
+            for (int j = 1; j < (int)Q_node_rec.size(); j++)
+            {
+                sum_dor_node++;
+            }
+
             // 1跳支配
             for (; contact_rec_pos <= i ; contact_rec_pos++)
             {
                 int id1 = Q_contact_rec_time_based[contact_rec_pos].ID1;            // 主动连接设备ID
-                int id2 = Q_contact_rec_time_based[contact_rec_pos].ID2;            // 主动连接设备ID
+                int id2 = Q_contact_rec_time_based[contact_rec_pos].ID2;            // 被动连接设备ID
 
                 if (id1 <= MAXN && id2 <= MAXN)
                 {
                     sum_event_rec++;
                     contact_to_dor[id1] = node_is_dor[id2];
-                    Q[id1]=true;
+                    Q[id1] = true;
                 }
             }
-            */
+
+            //end
+
             // 2跳支配
+            /*
             for (int p = contact_rec_pos; p <= i ; p++)
             {
                 int id1 = Q_contact_rec_time_based[p].ID1;                          // 主动连接设备ID
-                int id2 = Q_contact_rec_time_based[p].ID2;                          // 主动连接设备ID
+                int id2 = Q_contact_rec_time_based[p].ID2;                          // 被动连接设备ID
 
                 if (id1 <= MAXN && id2 <= MAXN)
                 {
@@ -142,6 +150,8 @@ int simulation_time_based()
                     contact_to_dor[id1] = node_is_dor[id2];
                 }
             }
+            //end
+            */
 
             for (; contact_rec_pos <= i ; contact_rec_pos++)
             {
@@ -159,7 +169,7 @@ int simulation_time_based()
                 }
             }
 
-            fout_iso << ll << "\t" << sum_iso_node << " " << sum_event_rec << endl;
+            fout_iso << ll << "\t" << sum_dor_node << " " << sum_iso_node << " " << sum_event_rec << endl;
         }
 
         // check end

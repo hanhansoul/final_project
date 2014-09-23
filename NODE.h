@@ -3,7 +3,6 @@
 #ifndef NODE_H_H
 #define NODE_H_H
 
-
 struct NODE                     // NODE表示一个节点中包含的数据结构和内容.
 {
     /*
@@ -26,6 +25,11 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
         tmp_adj_max_node = ID;
         contacts = 0;
         tmp_contacts = 0;
+        //
+        distance = ID == SOURCE ? distance : 0;
+        tmp_distance = ID == SOURCE ? tmp_distance : 0;
+        carry_data = false;
+        step=0;
     }
 
     int ID;                             // 该节点ID
@@ -38,6 +42,13 @@ struct NODE                     // NODE表示一个节点中包含的数据结�
     int tmp_adj_max_node;
     int tmp_contacts;
     bool is_dominator;                  // 根据dor_prob随机决定是否为dor
+
+    // push_data
+    int distance;                       // 到节点1的最短距离
+    int tmp_distance;
+    bool carry_data;                    // 是否携带数据
+    int step;
+    //
 
     int adj_tot_state;                  // 附近节点的state之和, 通过M_adj_node更新
     double dor_prob;                    // DOR的概率
@@ -67,5 +78,6 @@ extern vector < EVENT_REC > Q_contact_rec_node_based[MAXN];     // 根据节点�
 extern vector < EVENT_REC > Q_contact_rec_time_based;           // 根据时间轴来记录连接
 extern vector < NODE > Q_node_rec;                              // 表示每一个节点
 extern int Q_vote[VOTE_K];
+extern int data_event;
 
 #endif

@@ -33,6 +33,7 @@
 
 extern vector < EVENT_REC > Q_contact_rec_node_based[MAXN];  // 根据节点来记录连接
 extern vector < EVENT_REC > Q_contact_rec_time_based;        // 根据时间轴来记录连接
+int data_event;
 
 bool time_cmp(const EVENT_REC & t1, const EVENT_REC & t2)
 {
@@ -82,13 +83,13 @@ int data_input()
     while (fscanf(fin, "%d%d%d%d%d%d", &ID1, &ID2, &start_time, &end_time, &num, &interval) != EOF)
     {
         sum_event++;
-        max_time = max(max_time, start_time);
-        EVENT_REC tmp(ID1, ID2, start_time, end_time, num, interval);
-        Q_contact_rec_node_based[ID1].push_back(tmp);
-        Q_contact_rec_time_based.push_back(tmp);
 
-        if (ID1 <= 100 && ID2 <= 100)
+        if (ID1 <= MAXN && ID2 <= MAXN)
         {
+            max_time = max(max_time, start_time);
+            EVENT_REC tmp(ID1, ID2, start_time, end_time, num, interval);
+            Q_contact_rec_node_based[ID1].push_back(tmp);
+            Q_contact_rec_time_based.push_back(tmp);
             sum_available_event++;
         }
     }
@@ -96,8 +97,14 @@ int data_input()
     cout << "事件总次数:\t" << sum_event << endl;
     cout << "有效事件总次数:\t" << sum_available_event << endl;
     cout << "事件序列终止时间:\t" << max_time << endl;
+    srand(time(NULL));
     // 根据时间轴对Q_contact_rec_time_based进行排序
     sort(Q_contact_rec_time_based.begin(), Q_contact_rec_time_based.end(), time_cmp);
+    data_event = rand() / Q_contact_rec_time_based.size();
+    cout << "data_event = " << data_event << endl;
+    cout << "ID1 = " << Q_contact_rec_time_based[data_event].ID1 << endl;
+    cout << "ID2 = " << Q_contact_rec_time_based[data_event].ID2 << endl;
+    getchar();
     //    for(int i = 0; i < (int)Q_contact_rec_time_based.size(); i++)
     //    {
     //        EVENT_REC tmp = Q_contact_rec_time_based[i];

@@ -33,6 +33,8 @@ using namespace std;
 #define RESERVE_TIME 1000       // 投票保留间隔时间
 #define CHECK_TIME_LEN 80000    // check时间间隔
 #define DOR_THRESHOLD 0.9       // 支配概率dor_prob阈值
+#define MAXN_DIS 20
+#define SOURCE 1
 
 struct EVENT_REC                // 记录连接事件
 {
@@ -81,15 +83,16 @@ struct MSG_REC                          // 记录相邻节点信息
     {
     }
 
-    MSG_REC(int ID,int state, int adj_max_state, int adj_max_node, int contacts, bool is_dominator, int time)
+    MSG_REC(int ID, int state, int adj_max_state, int adj_max_node, int contacts, bool is_dominator, int time, int distance)
     {
-        this->ID=ID;
+        this->ID = ID;
         this->state = state;
         this->adj_max_state = adj_max_state;
         this->adj_max_node = adj_max_node;
         this->contacts = contacts;
         this->is_dominator = is_dominator;
         this->time = time;
+        this->distance = distance;
     }
 
     int ID;
@@ -99,21 +102,26 @@ struct MSG_REC                          // 记录相邻节点信息
     int contacts;                       // 与C的连接次数
     bool is_dominator;                  // 是否为DOR
     int time;                           // 最近一次连接的时间
+    //
+    int distance;
+    //
 };
 
 struct MSG                              // 一次连接传递的信息
 {
-    MSG(): ID1(0), ID2(0), msg_rec(), direct_vote(), indirect_vote()
+    MSG(): ID1(0), ID2(0), msg_rec(), direct_vote(), indirect_vote(), push_data(false)
     {
     }
 
-    MSG(int ID1, int ID2, MSG_REC msg_rec, VOTE direct_vote, VOTE indirect_vote)
+    MSG(int ID1, int ID2, MSG_REC msg_rec, VOTE direct_vote, VOTE indirect_vote, bool push_data, int step)
     {
         this->ID1 = ID1;
         this->ID2 = ID2;
         this->msg_rec = msg_rec;
         this->direct_vote = direct_vote;
         this->indirect_vote = indirect_vote;
+        this->push_data = push_data;
+        this->step = step;
     }
 
     int ID1;
@@ -121,6 +129,10 @@ struct MSG                              // 一次连接传递的信息
     MSG_REC msg_rec;                    // 节点B需要记录的信息
     VOTE direct_vote;                   // 该节点的直接投票
     VOTE indirect_vote;                 // 该节点的间接投票
+    //
+    bool push_data;
+    int step;
+    //
 };
 
 #endif

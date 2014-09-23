@@ -77,6 +77,10 @@ MSG NODE::connect(int to_ID)                    // 向其他节点发出连接, 
 {
     // 更新 M_contacts_rec, 从Q_max_k_heap中选出最大的k组.
     vector < pair < int, int > >::iterator posB, posC;  // Q_max_k_heap;
+    //
+    bool push_data = false;
+    int s = 0;
+    //
     int index, indirect_vote_ID;
     int value, voteB, voteC;
     int a, b, c;
@@ -91,6 +95,53 @@ MSG NODE::connect(int to_ID)                    // 向其他节点发出连接, 
         if (M_adj_node.count(to_ID))
         {
             MSG_REC t_rec = M_adj_node[to_ID];              // B
+
+            //  data_push
+            if (carry_data)
+            {
+                cout << "ID = " << ID << endl;
+                cout << "to_ID = " << to_ID << endl;
+                cout << endl;
+
+                if (t_rec.is_dominator)
+                {
+                    cout << "distance = " << distance << endl;
+                    cout << "is_dominator = " << is_dominator << endl;
+                    cout << "t_rec.distance = " << t_rec.distance << endl;
+                    cout << "t_rec.is_dominator = " << t_rec.is_dominator << endl;
+                    cout << endl;
+
+                    if (is_dominator)
+                    {
+                        if (t_rec.distance < distance)
+                        {
+                            push_data = true;
+                            carry_data = false;
+                            s = step + 1;
+                            step = 0;
+                        }
+                    }
+                    else
+                    {
+                        push_data = true;
+                        carry_data = false;
+                        s = step + 1;
+                        step = 0;
+                    }
+                }
+                else
+                {
+                    if (!is_dominator && t_rec.distance < distance)
+                    {
+                        push_data = true;
+                        carry_data = false;
+                        s = step + 1;
+                        step = 0;
+                    }
+                }
+            }
+
+            //
             indirect_vote_ID = t_rec.adj_max_node;
             b = t_rec.contacts;
 
@@ -197,8 +248,8 @@ MSG NODE::connect(int to_ID)                    // 向其他节点发出连接, 
 
     VOTE direct_vote(ID, to_ID, voteB);
     VOTE indirect_vote(to_ID, indirect_vote_ID, voteC);
-    MSG_REC msg_rec(ID, state, adj_max_state, adj_max_node, contacts, is_dominator, duration);
-    return MSG(ID, to_ID, msg_rec, direct_vote, indirect_vote);
+    MSG_REC msg_rec(ID, state, adj_max_state, adj_max_node, contacts, is_dominator, duration, distance);
+    return MSG(ID, to_ID, msg_rec, direct_vote, indirect_vote, push_data, s);
 }
 
 vector < pair < int, int > >::iterator NODE::in_Q_heap(int ID)
@@ -263,6 +314,39 @@ int NODE::be_connected(MSG msg)                 // 被投票
         M_indirect_vote.insert(MP(msg.indirect_vote.to_ID, msg.indirect_vote.vote));
     }
 
+    //  push_data
+    tmp_distance = min(tmp_distance, t_rec.distance + 1);
+    distance = min(distance, tmp_distance);
+
+    if (msg.push_data)
+    {
+        cout << "step = " << msg.step << endl;
+
+        if (ID == SOURCE)
+        {
+            cout << "data_push_success!" << endl;
+            cout << "step = " << msg.step << endl;
+            carry_data = false;
+            step = 0;
+        }
+        else
+        {
+            if (msg.step > MAXN_DIS)
+            {
+                cout << "data_push_failed!" << endl;
+                cout << "step = " << msg.step << endl;
+                carry_data = false;
+                step = 0;
+            }
+            else
+            {
+                carry_data = true;
+                step = msg.step;
+            }
+        }
+    }
+
+    //
     if (tmp_adj_max_state < t_rec.state)
     {
         tmp_adj_max_state = t_rec.state;
@@ -382,6 +466,9 @@ int NODE::update(int current_time)
     adj_max_state = tmp_adj_max_state;
     adj_max_node = tmp_adj_max_node;
     contacts = tmp_contacts;
+    //  push_data
+    distance = ID == SOURCE ? 0 : tmp_distance;
+    //
     return 0;
 }
 

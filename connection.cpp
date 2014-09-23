@@ -8,7 +8,7 @@
 
 extern vector < NODE > Q_node_rec;              // 表示每一个节点
 
-int connection(EVENT_REC record)
+int connection(EVENT_REC record, bool data_gen)
 {
     // connection 一次连接
     int ID1 = record.ID1;                       // 主动连接设备ID
@@ -17,24 +17,28 @@ int connection(EVENT_REC record)
     int end_time = record.end_time;             // 连接结束时间
     int num = record.num;                       // 连接编号
     int interval = record.num;                  // 连接时间间隔
-        
-    if(ID1 > 100 || ID2 > 100) 
+
+    if (ID1 > 100 || ID2 > 100)
     {
-        // printf("external device.\n"); 
-        return -1; 
+        // printf("external device.\n");
+        return -1;
     }
 
     // update
-    Q_node_rec[ID1].update_time(start_time); 
-    Q_node_rec[ID2].update_time(start_time); 
+    if (data_gen)
+    {
+        cout << "data_gen " << ID1 << endl << endl;
+    }
 
-    MSG msg; 
+    Q_node_rec[ID1].carry_data = data_gen;
+    Q_node_rec[ID1].update_time(start_time);
+    Q_node_rec[ID2].update_time(start_time);
+    MSG msg;
     // ID1 --> ID2
     // ID1
-    msg = Q_node_rec[ID1].connect(ID2); 
-    // ID2 
-    Q_node_rec[ID2].be_connected(msg); 
-
-    return 0; 
+    msg = Q_node_rec[ID1].connect(ID2);
+    // ID2
+    Q_node_rec[ID2].be_connected(msg);
+    return 0;
 }
 
